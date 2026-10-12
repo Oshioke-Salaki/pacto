@@ -12,11 +12,11 @@ Escrow for group orders on Solana. See [PRD.md](PRD.md) for product, [PROGRAM.md
 
 | Area | State | Notes |
 |---|---|---|
-| Anchor program (`programs/pacto`) | Done, tested | 14 instructions. 13 tests pass (`cargo test`): 3 math unit tests, 10 LiteSVM lifecycle tests covering every refund path and unauthorized path. Built with `anchor build --arch v0` (SBPF v0 is required for LiteSVM 0.10 and is safest on devnet). |
+| Anchor program (`programs/pacto`) | Done, tested | 14 instructions. 15 tests pass (`cargo test`): 3 math unit tests, 12 LiteSVM lifecycle tests covering every refund path, unauthorized paths, and shared-wallet roles (organizer joins own order, treasury == organizer). Built with `anchor build --arch v0` (required by LiteSVM 0.10; devnet still accepts v0 deploys, SIMD-0500 is inactive there). |
 | Program deployed to devnet | Blocked | Needs about 3 SOL on `HVa4CTKt61EL7mNEQpwb3bFMkvL54KTgy5NsEoJVnSao` (deployer keypair at `~/.config/solana/id.json`). Public airdrop was rate-limited all session. Program id is fixed: `G6aqqtwxaYjhqJhZsix3ZweJg8SJd7N6dwZLxewPokLA` (keypair in `target/deploy/pacto-keypair.json`, gitignored). |
 | Devnet bootstrap (test USDC mint, config, arbiter) | Script ready, not run | `cd app && pnpm setup:devnet` after deploy. Prints env values to paste into `app/.env.local`. |
 | Web app (`app/`) | Builds and lints clean | Next.js 16.4, Tailwind v4, Cache Components. Pages: `/`, `/explore`, `/go/[address]`, `/create`, `/dashboard`, `/organizer/[address]`, `/how-it-works`. APIs: `/api/go`, `/api/go/[address]`, `/api/config`, `/api/faucet` (devnet), Blinks at `/api/actions/go/[address]` plus `/actions.json`. |
-| End-to-end test against devnet | Not done | Requires deploy. Then: create order, join from a second wallet, lock, ship, confirm, and the refund path. |
+| End-to-end test (client layer + app APIs) | Passing on a local validator | `cd app && pnpm e2e` drives create, join, Blink POST join, faucet, API reads, lock, ship, confirm, close vault, leave, cancel, refund through the exact builders the UI uses. Run against devnet after deploy with `SOLANA_RPC_URL=<devnet rpc> USDC_MINT=<mint> SITE_URL=<app url> pnpm e2e`. Local validator needs `--deactivate-feature B8JJXCy5amZyWG9r7EnUYLwzXSXTxG7GZ1qZ1qggo83g` to accept v0 deploys. |
 | Vercel deploy | Not done | `cd app && vercel`. Set env vars from `app/.env.example`. Set `NEXT_PUBLIC_SITE_URL` to the Vercel URL so Blinks resolve. |
 | Pitch and demo videos | Not done | Script in [PITCH.md](PITCH.md). |
 | Submission folder | Not done | Checklist in [SUBMISSION.md](SUBMISSION.md). |
@@ -33,10 +33,11 @@ Escrow for group orders on Solana. See [PRD.md](PRD.md) for product, [PROGRAM.md
    ```
    If the program id ever changes, run `anchor keys sync`, rebuild, then `cd app && pnpm sync:idl`.
 3. Bootstrap devnet state: `cd app && pnpm setup:devnet`. Paste the printed `NEXT_PUBLIC_USDC_MINT` and `FAUCET_AUTHORITY_SECRET` into `app/.env.local`.
-4. Run locally: `cd app && pnpm dev`. Connect Phantom on devnet, click "Get 100 test USDC" on the dashboard, create an order, join it from a second wallet, walk the lifecycle.
-5. Deploy the app to Vercel with the same env vars, then update `NEXT_PUBLIC_SITE_URL`.
-6. Test the Blink: open `https://dial.to/?action=solana-action:<SITE_URL>/api/actions/go/<address>` (set wallet to devnet).
-7. Record the demo and pitch, fill the submission folder, submit on Earn.
+4. Verify: `cd app && SOLANA_RPC_URL=https://api.devnet.solana.com USDC_MINT=<mint> pnpm e2e` (deployer wallet needs about 0.1 SOL for the test buyer airdrop; on devnet the script's `requestAirdrop` may be rate-limited, in which case fund the buyer manually or skip to the UI test).
+5. Run locally: `cd app && pnpm dev`. Connect Phantom on devnet, click "Get 100 test USDC" on the dashboard, create an order, join it from a second wallet, walk the lifecycle.
+6. Deploy the app to Vercel with the same env vars, then update `NEXT_PUBLIC_SITE_URL`.
+7. Test the Blink: open `https://dial.to/?action=solana-action:<SITE_URL>/api/actions/go/<address>` (set wallet to devnet).
+8. Record the demo and pitch, fill the submission folder, submit on Earn.
 
 ## How to work in this repo
 
@@ -48,7 +49,9 @@ Escrow for group orders on Solana. See [PRD.md](PRD.md) for product, [PROGRAM.md
 
 ## Known gaps and decisions still open
 
-- Cover images are URLs supplied by the organizer; there is no upload. Landing sample card uses a Picsum placeholder photo (`src/lib/sample.ts`). Replace with real brand photography before mainnet.
+- Cover images are URLs supplied by the organizer; there is no upload. The landing sample card uses an Unsplash concert photo (`src/lib/sample.ts`). Replace with owned brand photography before mainnet.
+- Footer "Source code" link points at github.com; set it to the real repository URL in `src/components/layout/footer.tsx`.
+- `NEXT_PUBLIC_*` values are inlined at build time. Rebuild after changing the mint, RPC or site URL.
 - Arbiter for the demo is a generated keypair in `keys/arbiter.json` (gitignored). A dispute-resolution UI exists on the order page for whoever connects that wallet.
 - No indexer. `getProgramAccounts` is called server-side with a 15 second cache for the explore list. Fine for hundreds of orders; see ROADMAP for the Helius path.
 - `/api/faucet` keeps its rate limit in memory, so it resets on each serverless cold start. Acceptable for devnet.

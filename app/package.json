@@ -9,7 +9,8 @@
     "lint": "eslint",
     "setup:devnet": "tsx scripts/setup-devnet.ts",
     "typecheck": "tsc --noEmit --incremental false -p .",
-    "sync:idl": "cp ../target/idl/pacto.json src/lib/pacto/idl.json && cp ../target/types/pacto.ts src/lib/pacto/types.ts"
+    "sync:idl": "cp ../target/idl/pacto.json src/lib/pacto/idl.json && cp ../target/types/pacto.ts src/lib/pacto/types.ts",
+    "e2e": "tsx scripts/e2e.ts"
   },
   "dependencies": {
     "@anchor-lang/core": "1.2.1",

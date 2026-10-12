@@ -49,12 +49,16 @@ pub struct Settle<'info> {
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(mut)]
     pub vault: InterfaceAccount<'info, TokenAccount>,
+    /// The three token accounts below are marked `dup` because roles may share
+    /// a wallet (an organizer who joined their own order, or a treasury that
+    /// is also the organizer).
     #[account(
         init_if_needed,
         payer = signer,
         associated_token::mint = mint,
         associated_token::authority = buyer,
         associated_token::token_program = token_program,
+        dup,
     )]
     pub buyer_token_account: InterfaceAccount<'info, TokenAccount>,
     #[account(
@@ -63,6 +67,7 @@ pub struct Settle<'info> {
         associated_token::mint = mint,
         associated_token::authority = organizer,
         associated_token::token_program = token_program,
+        dup,
     )]
     pub organizer_token_account: InterfaceAccount<'info, TokenAccount>,
     #[account(
@@ -71,6 +76,7 @@ pub struct Settle<'info> {
         associated_token::mint = mint,
         associated_token::authority = treasury,
         associated_token::token_program = token_program,
+        dup,
     )]
     pub treasury_token_account: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,

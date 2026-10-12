@@ -111,6 +111,7 @@ Edge-case policy (each has a test in `programs/pacto/tests/lifecycle.rs`):
 - Release on delivery timeout is permissionless so a crank can settle for an organizer who went quiet after shipping.
 - An unresolved dispute falls back to the buyer 30 days after the delivery window.
 - The organizer cannot be the arbiter of their own order.
+- Roles may share a wallet (organizer joins their own order; treasury equals organizer). Token accounts that can coincide are marked `dup` so Anchor's duplicate-mutable-account check does not reject them.
 
 ## 3. Instructions
 

@@ -35,12 +35,15 @@ pub struct Lock<'info> {
     pub mint: InterfaceAccount<'info, Mint>,
     #[account(mut)]
     pub vault: InterfaceAccount<'info, TokenAccount>,
+    /// May be the same account as `treasury_token_account` when the organizer
+    /// is also the treasury, hence `dup`.
     #[account(
         init_if_needed,
         payer = organizer,
         associated_token::mint = mint,
         associated_token::authority = organizer,
         associated_token::token_program = token_program,
+        dup,
     )]
     pub organizer_token_account: InterfaceAccount<'info, TokenAccount>,
     #[account(
@@ -49,6 +52,7 @@ pub struct Lock<'info> {
         associated_token::mint = mint,
         associated_token::authority = treasury,
         associated_token::token_program = token_program,
+        dup,
     )]
     pub treasury_token_account: InterfaceAccount<'info, TokenAccount>,
     pub token_program: Interface<'info, TokenInterface>,

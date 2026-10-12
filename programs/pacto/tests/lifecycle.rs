@@ -750,3 +750,43 @@ fn paused_blocks_create_and_join() {
     assert_err(w.join(&go, 0, 1), "Paused");
     assert_err(w.create_go(w.default_args(41)), "Paused");
 }
+
+#[test]
+fn organizer_can_join_own_order_and_settle() {
+    // Roles sharing a wallet must not trip duplicate-account checks.
+    let mut w = World::new(1);
+    w.init_config();
+    let mut a = w.default_args(50);
+    a.min_qty = 2;
+    let go = w.create_go(a).unwrap();
+    // Organizer joins as a buyer (index 1 slot reuse: push organizer into buyers).
+    let org = w.organizer.insecure_clone();
+    w.buyers.push(org.insecure_clone());
+    let org_idx = w.buyers.len() - 1;
+    w.mint_to(&org.pubkey(), 1_000 * USDC);
+    w.join(&go, 0, 1).unwrap();
+    w.join(&go, org_idx, 1).unwrap();
+    w.lock(&go, &org).unwrap();
+    w.mark_shipped(&go, &org).unwrap();
+    // Organizer confirms their own receipt: buyer == organizer token account.
+    w.confirm(&go, org_idx).unwrap();
+    w.confirm(&go, 0).unwrap();
+    assert_eq!(w.go_state(&go).status, GoStatus::Completed);
+}
+
+#[test]
+fn treasury_may_equal_organizer() {
+    let mut w = World::new(1);
+    // Point the treasury at the organizer before initializing config.
+    w.treasury = w.organizer.insecure_clone();
+    w.init_config();
+    let mut a = w.default_args(60);
+    a.min_qty = 1;
+    let go = w.create_go(a).unwrap();
+    w.join(&go, 0, 1).unwrap();
+    let org = w.organizer.insecure_clone();
+    w.lock(&go, &org).unwrap();
+    w.mark_shipped(&go, &org).unwrap();
+    w.confirm(&go, 0).unwrap();
+    assert_eq!(w.go_state(&go).status, GoStatus::Completed);
+}

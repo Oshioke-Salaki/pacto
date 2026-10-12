@@ -524,6 +524,11 @@ export type Pacto = {
         },
         {
           "name": "buyerTokenAccount",
+          "docs": [
+            "The three token accounts below are marked `dup` because roles may share",
+            "a wallet (an organizer who joined their own order, or a treasury that",
+            "is also the organizer)."
+          ],
           "writable": true,
           "pda": {
             "seeds": [
@@ -1375,6 +1380,10 @@ export type Pacto = {
         },
         {
           "name": "organizerTokenAccount",
+          "docs": [
+            "May be the same account as `treasury_token_account` when the organizer",
+            "is also the treasury, hence `dup`."
+          ],
           "writable": true,
           "pda": {
             "seeds": [
@@ -1799,6 +1808,11 @@ export type Pacto = {
         },
         {
           "name": "buyerTokenAccount",
+          "docs": [
+            "The three token accounts below are marked `dup` because roles may share",
+            "a wallet (an organizer who joined their own order, or a treasury that",
+            "is also the organizer)."
+          ],
           "writable": true,
           "pda": {
             "seeds": [
@@ -2124,6 +2138,11 @@ export type Pacto = {
         },
         {
           "name": "buyerTokenAccount",
+          "docs": [
+            "The three token accounts below are marked `dup` because roles may share",
+            "a wallet (an organizer who joined their own order, or a treasury that",
+            "is also the organizer)."
+          ],
           "writable": true,
           "pda": {
             "seeds": [
