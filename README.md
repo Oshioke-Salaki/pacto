@@ -36,6 +36,8 @@ pnpm setup:devnet               # creates test USDC mint, arbiter key, protocol 
 pnpm dev
 ```
 
+Live app (devnet): https://pacto-oshiokesalakis-projects.vercel.app
+
 Program id (devnet): `G6aqqtwxaYjhqJhZsix3ZweJg8SJd7N6dwZLxewPokLA`
 
 ## How it works

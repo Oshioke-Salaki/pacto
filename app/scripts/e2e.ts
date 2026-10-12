@@ -14,6 +14,7 @@ import {
   Keypair,
   LAMPORTS_PER_SOL,
   PublicKey,
+  SystemProgram,
   Transaction,
   VersionedTransaction,
   sendAndConfirmTransaction,
@@ -59,9 +60,18 @@ async function main() {
   console.log("Organizer", organizer.publicKey.toBase58());
   console.log("Buyer", buyer.publicKey.toBase58());
 
-  // Fund buyer with SOL and 500 test USDC (deployer is the mint authority).
-  const sig = await connection.requestAirdrop(buyer.publicKey, 2 * LAMPORTS_PER_SOL);
-  await connection.confirmTransaction(sig, "confirmed");
+  // Fund buyer with SOL (airdrop, falling back to a transfer from the deployer
+  // when the public faucet is rate-limited) and 500 test USDC.
+  try {
+    const sig = await connection.requestAirdrop(buyer.publicKey, LAMPORTS_PER_SOL / 2);
+    await connection.confirmTransaction(sig, "confirmed");
+  } catch {
+    await sendAndConfirmTransaction(
+      connection,
+      new Transaction().add(SystemProgram.transfer({ fromPubkey: deployer.publicKey, toPubkey: buyer.publicKey, lamports: LAMPORTS_PER_SOL / 20 })),
+      [deployer],
+    );
+  }
   const buyerAta = getAssociatedTokenAddressSync(MINT, buyer.publicKey);
   await sendAndConfirmTransaction(
     connection,

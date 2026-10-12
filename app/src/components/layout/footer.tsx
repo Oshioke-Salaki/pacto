@@ -33,7 +33,7 @@ export function Footer() {
                 Program on Solana Explorer
               </a>
             </li>
-            <li><a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-ink">Source code</a></li>
+            <li><a href="https://github.com/Oshioke-Salaki/pacto" target="_blank" rel="noreferrer" className="hover:text-ink">Source code</a></li>
             <li><Link href="/how-it-works#safety" className="hover:text-ink">Safety rules</Link></li>
           </ul>
         </div>
