@@ -31,10 +31,10 @@ export function Problem() {
             href="https://www.infobae.com/peru/2026/10/05/bts-en-lima-mas-de-800-fanaticas-denuncian-presunta-estafa-por-army-bomb-en-el-centro-comercial-arenales/"
           />
           <StatBlock
-            value="~7%"
-            label="of money lost to Pix fraud is recovered through the official dispute mechanism."
-            source="Poder360, BCB data"
-            href="https://www.poder360.com.br/poder-economia/golpes-do-pix-crescem-80-e-somam-r-65-bilhoes-em-2024"
+            value="8%"
+            label="of money contested as Pix fraud is actually returned to victims through the official dispute mechanism (MED), per Banco Central data."
+            source="Finsiders Brasil, BC data"
+            href="https://finsidersbrasil.com.br/noticias-sobre-fintechs/fraudes/mesmo-com-med-so-8-dos-valores-roubados-via-pix-sao-devolvidos/"
           />
           <StatBlock
             value="5th"

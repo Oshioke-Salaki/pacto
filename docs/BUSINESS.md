@@ -2,6 +2,8 @@
 
 Last updated: 2026-10-12. Every number below has a source. Where no credible number exists, this doc says so instead of inventing one.
 
+Verification log: the Aratu On (Bahia, R$ 460k, about 1,000 fans, Pix to relatives' accounts, no refunds, organizer known on X), Infobae (Lima, 800+ fans, three pre-orders at S/ 329 to 369, nothing delivered, store closed) and Spotify Wrapped 2025 (Brazil 5th, Mexico 6th) claims were re-read directly from the original articles on 2026-10-12. The Pix recovery rate was cross-checked against three independent reports of Banco Central data and corrected from "about 7 percent" to "about 8 percent".
+
 ## 1. The problem is live and expensive
 
 Recent cases of group-order and pre-sale fraud in Latin America:
@@ -13,7 +15,7 @@ Recent cases of group-order and pre-sale fraud in Latin America:
 | "Store de Fa" vinyl pre-orders, Santa Catarina. Hundreds of orders undelivered since 2025. | May 2026 | More than 300 consumers, more than R$ 200,000. | [ND Mais](https://ndmais.com.br/seguranca/economizaram-por-meses-fas-de-sc-afirmam-ter-caido-em-golpe-de-r-200-mil-de-loja-de-vinis/) |
 
 Structural reasons it keeps happening:
-- Pix is instant and irreversible. Only about 7 to 8 percent of stolen Pix value is recovered through the official dispute mechanism (MED). Pix fraud losses in 2024 were between R$ 2.7 billion (Febraban) and R$ 6.5 billion (BCB-derived), depending on the source. Sources: [Poder360](https://www.poder360.com.br/poder-economia/golpes-do-pix-crescem-80-e-somam-r-65-bilhoes-em-2024), [Finsiders](https://finsidersbrasil.com.br/noticias-sobre-fintechs/fraudes/mesmo-com-med-so-8-dos-valores-roubados-via-pix-sao-devolvidos/).
+- Pix is instant and irreversible. Only about 8 percent of the money contested as Pix fraud is returned to victims through the official dispute mechanism (MED): R$ 1.4 billion recovered out of R$ 17.6 billion requested between November 2021 and June 2025 (8.2 percent, Banco Central data via O Globo), and 8.2 percent of requested amounts in 2024 ([TecMundo](https://www.tecmundo.com.br/seguranca/289538-ferramenta-banco-central-devolveu-r-1-1-bi-perdidos-pix.htm)). A Finsiders analysis of BC data reached the same 8 percent ([Finsiders](https://finsidersbrasil.com.br/noticias-sobre-fintechs/fraudes/mesmo-com-med-so-8-dos-valores-roubados-via-pix-sao-devolvidos/)). Pix fraud losses reported to the BC reached R$ 4.94 billion in 2024, up 70 percent on 2023 (BC data via Broadcast), and MED refund requests nearly doubled to R$ 10.2 billion ([Canaltech](https://canaltech.com.br/podcast/podcast-canaltech/med-do-pix-da-pra-recuperar-o-dinheiro-de-um-golpe-5891/)). Febraban's narrower bank-sector figure is R$ 2.7 billion.
 - Group orders run on trust by design. Fanlore documents that GOMs scam or ghost buyers with little recourse because payments go through friends-and-family rails. [Fanlore](https://fanlore.org/wiki/Group_order)
 - Mercado Pago's buyer protection does not cover Pix sent directly to a seller, which is how GOs are paid. [Mercado Pago](https://www.mercadopago.com.br/blog/o-que-e-compra-garantida-mercado-pago)
 
