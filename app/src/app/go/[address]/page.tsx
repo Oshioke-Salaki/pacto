@@ -74,22 +74,23 @@ async function Content({ params }: Params) {
       </nav>
 
       <div className="mt-5 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-12">
-        {/* Left: story */}
-        <div className="flex flex-col gap-7">
-          <div>
+        {/* Header: first everywhere */}
+        <div className="lg:col-start-1">
             <div className="flex flex-wrap items-center gap-3">
-              <StatusChip status={go.status} />
-              <span className="text-[13px] text-ink-2">{STATUS_DESCRIPTION[go.status]}</span>
-            </div>
-            <h1 className="font-display mt-3 text-3xl font-semibold leading-tight text-ink sm:text-4xl">{go.title}</h1>
-            <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-ink-2">{go.description}</p>
-            {go.detailsUri ? (
-              <a href={go.detailsUri} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-[15px] font-medium text-ink underline-offset-4 hover:underline">
-                Full details on the organizer&apos;s post <ArrowSquareOut size={16} />
-              </a>
-            ) : null}
+            <StatusChip status={go.status} />
+            <span className="text-[13px] text-ink-2">{STATUS_DESCRIPTION[go.status]}</span>
           </div>
+          <h1 className="font-display mt-3 text-3xl font-semibold leading-tight text-ink sm:text-4xl">{go.title}</h1>
+          <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-ink-2">{go.description}</p>
+          {go.detailsUri ? (
+            <a href={go.detailsUri} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-[15px] font-medium text-ink underline-offset-4 hover:underline">
+              Full details on the organizer&apos;s post <ArrowSquareOut size={16} />
+            </a>
+          ) : null}
+        </div>
 
+        {/* Story: below the header on desktop, after the actions on phones */}
+        <div className="order-3 flex flex-col gap-7 lg:order-none lg:col-start-1">
           {go.imageUri ? (
             <div className="overflow-hidden rounded-[var(--r-card)] border border-line bg-surface-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -155,8 +156,8 @@ async function Content({ params }: Params) {
           </section>
         </div>
 
-        {/* Right: actions */}
-        <aside className="flex flex-col gap-4 lg:sticky lg:top-24 lg:self-start">
+        {/* Actions: right after the header on phones, sticky right column on desktop */}
+        <aside className="order-2 flex flex-col gap-4 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:sticky lg:top-24 lg:self-start">
           <ActionPanel address={go.address} initial={go} decimals={decimals} />
           <OrganizerCard organizer={go.organizer} stats={stats} decimals={decimals} />
         </aside>

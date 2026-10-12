@@ -1,6 +1,8 @@
 import { daysFromSecs, formatUnits } from "@/lib/pacto/format";
 import { mulBpsCeil, type GroupOrderView } from "@/lib/pacto/state";
 
+const plural = (n: number, unit: string) => `${n} ${unit}${n === 1 ? "" : "s"}`;
+
 /** The buyer-protection terms in plain words. Shown before anyone pays. */
 export function GoTerms({ go, decimals = 6, qty = 1 }: { go: GroupOrderView; decimals?: number; qty?: number }) {
   const unit = BigInt(go.unitPrice);
@@ -20,12 +22,12 @@ export function GoTerms({ go, decimals = 6, qty = 1 }: { go: GroupOrderView; dec
     },
     {
       k: "Ship-by window",
-      v: `${daysFromSecs(go.shipBySecs)} days`,
+      v: plural(daysFromSecs(go.shipBySecs), "day"),
       d: "After locking, the organizer must mark the order shipped within this window, or you reclaim the held share.",
     },
     {
       k: "Delivery window",
-      v: `${daysFromSecs(go.deliveryWindowSecs)} days`,
+      v: plural(daysFromSecs(go.deliveryWindowSecs), "day"),
       d: "After shipping, you have this long to confirm or dispute. Undisputed shares release automatically afterwards.",
     },
     {
