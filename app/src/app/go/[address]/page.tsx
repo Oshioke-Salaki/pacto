@@ -76,7 +76,7 @@ async function Content({ params }: Params) {
       <div className="mt-5 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-12">
         {/* Header: first everywhere */}
         <div className="lg:col-start-1">
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <StatusChip status={go.status} />
             <span className="text-[13px] text-ink-2">{STATUS_DESCRIPTION[go.status]}</span>
           </div>
