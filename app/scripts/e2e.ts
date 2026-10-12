@@ -112,7 +112,7 @@ async function main() {
   await send(buyer, await buyerClient.join(ref, buyer.publicKey, 2));
   go = await view(groupOrder);
   assert.equal(go.totalQty, 2);
-  let p = await part(groupOrder, buyer.publicKey);
+  const p = await part(groupOrder, buyer.publicKey);
   assert.equal(p?.paid, "80000000");
   console.log("joined 2 units");
 

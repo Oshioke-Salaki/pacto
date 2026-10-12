@@ -43,7 +43,7 @@ export function GoCard({
             className="size-full object-cover transition-transform duration-500 ease-[var(--ease-out)] group-hover:scale-[1.02]"
           />
         ) : (
-          <div className="flex size-full items-center justify-center font-display text-4xl font-semibold text-ink-3/60">
+          <div className="flex size-full items-center justify-center bg-accent-soft font-display text-5xl font-semibold text-accent-ink/50">
             {go.title.slice(0, 1).toUpperCase()}
           </div>
         )}
