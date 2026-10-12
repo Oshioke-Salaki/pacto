@@ -1,26 +1,178 @@
 @import "tailwindcss";
 
+/*
+  Pacto design tokens. Light theme is locked for v1 (see docs/DESIGN.md).
+  Semantic names only; components never reference raw hex.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+
+  --bg: #f6f7f8;
+  --surface: #ffffff;
+  --surface-2: #eff1f3;
+  --surface-3: #e6e9ec;
+
+  --ink: #15171a;
+  --ink-2: #474d55;
+  --ink-3: #737a84;
+  --ink-inverse: #f6f7f8;
+
+  --line: #e3e6ea;
+  --line-2: #cfd4da;
+
+  --accent: #0e7c72;
+  --accent-2: #0a6359;
+  --accent-soft: #e2f2ef;
+  --accent-ink: #0a5a51;
+
+  --danger: #b2362f;
+  --danger-soft: #fbebe9;
+  --warn: #946408;
+  --warn-soft: #faf2dc;
+
+  --shadow-sm: 0 1px 2px rgba(21, 23, 26, 0.05), 0 1px 1px rgba(21, 23, 26, 0.03);
+  --shadow-md: 0 1px 2px rgba(21, 23, 26, 0.04), 0 12px 32px -16px rgba(21, 23, 26, 0.18);
+  --shadow-lg: 0 2px 4px rgba(21, 23, 26, 0.04), 0 24px 56px -24px rgba(21, 23, 26, 0.24);
+
+  --r-card: 16px;
+  --r-input: 10px;
+  --r-pill: 9999px;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ink-inverse: var(--ink-inverse);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-card: var(--r-card);
+  --radius-input: var(--r-input);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --ease-out: var(--ease-out);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv11";
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Display type: Bricolage Grotesque, tightened. */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  font-variation-settings: "opsz" 96, "wdth" 100;
+}
+
+/* Tabular numerals for money and counts. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hairline divider utility that follows the token palette. */
+.hairline {
+  border-color: var(--line);
+}
+
+/* Reveal animation used by landing sections. Collapses under reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(12px);
+    animation: reveal 0.6s var(--ease-out) forwards;
+  }
+  .reveal-delay-1 { animation-delay: 80ms; }
+  .reveal-delay-2 { animation-delay: 160ms; }
+  .reveal-delay-3 { animation-delay: 240ms; }
+  @keyframes reveal {
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* Wallet adapter modal: align with Pacto tokens. */
+.wallet-adapter-modal-wrapper {
+  background: var(--surface) !important;
+  color: var(--ink) !important;
+  border-radius: var(--r-card) !important;
+  box-shadow: var(--shadow-lg) !important;
+  font-family: var(--font-sans) !important;
+  border: 1px solid var(--line);
+}
+.wallet-adapter-modal-overlay {
+  background: rgba(21, 23, 26, 0.45) !important;
+  backdrop-filter: blur(4px);
+}
+.wallet-adapter-modal-title {
+  color: var(--ink) !important;
+  font-family: var(--font-display) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.02em;
+  font-size: 1.375rem !important;
+  padding: 40px 32px 16px !important;
+}
+.wallet-adapter-modal-button-close {
+  background: var(--surface-2) !important;
+}
+.wallet-adapter-modal-button-close svg {
+  fill: var(--ink-2) !important;
+}
+.wallet-adapter-modal-list .wallet-adapter-button {
+  font-family: var(--font-sans) !important;
+  font-weight: 500 !important;
+  color: var(--ink) !important;
+  border-radius: 12px !important;
+  margin: 4px 16px;
+}
+.wallet-adapter-modal-list .wallet-adapter-button:hover {
+  background: var(--surface-2) !important;
+}
+.wallet-adapter-modal-list-more {
+  color: var(--ink-2) !important;
+}
+.wallet-adapter-modal-middle-button {
+  background: var(--accent) !important;
+  border-radius: var(--r-pill) !important;
 }

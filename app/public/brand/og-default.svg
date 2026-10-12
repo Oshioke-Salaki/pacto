@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#f6f7f8"/>
+  <circle cx="520" cy="250" r="110" fill="none" stroke="#0e7c72" stroke-width="34"/>
+  <circle cx="680" cy="250" r="110" fill="none" stroke="#15171a" stroke-width="34"/>
+  <text x="600" y="470" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="88" font-weight="700" fill="#15171a" letter-spacing="-3">Pacto</text>
+  <text x="600" y="540" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="#474d55">Group buys, without the trust fall</text>
+</svg>
