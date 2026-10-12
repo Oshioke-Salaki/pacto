@@ -5,8 +5,8 @@ import { sampleGroupOrder } from "@/lib/sample";
 export function Hero({ now }: { now: number }) {
   const sample = sampleGroupOrder(now);
   return (
-    <section className="mx-auto grid max-w-7xl items-center gap-12 px-4 pb-20 pt-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16 lg:px-8 lg:pb-28 lg:pt-20">
-      <div className="max-w-xl">
+    <section className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 pb-14 pt-10 sm:px-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-16 lg:px-8 lg:pb-20 lg:pt-14">
+      <div className="min-w-0 max-w-xl">
         <h1 className="font-display reveal text-4xl font-semibold leading-[1.02] text-ink sm:text-5xl lg:text-[64px]">
           Group buys, without the trust fall.
         </h1>
@@ -22,7 +22,7 @@ export function Hero({ now }: { now: number }) {
           </ButtonLink>
         </div>
       </div>
-      <div className="reveal reveal-delay-2 relative mx-auto w-full max-w-md lg:max-w-none">
+      <div className="reveal reveal-delay-2 relative mx-auto w-full min-w-0 max-w-md lg:max-w-none">
         <div className="pointer-events-none" aria-label="Example group order card">
           <GoCard go={sample} now={now} priority className="shadow-lg" />
         </div>

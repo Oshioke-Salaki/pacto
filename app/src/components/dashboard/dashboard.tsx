@@ -50,7 +50,7 @@ export function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-10">
       {IS_DEVNET ? (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3">
           <p className="text-[14px] text-ink-2">You are on devnet. Test USDC is free, and nothing here is real money.</p>

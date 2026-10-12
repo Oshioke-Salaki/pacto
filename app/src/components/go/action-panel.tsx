@@ -371,7 +371,7 @@ function JoinCard({
           <span className="font-medium text-ink">{formatUnits(unit, decimals)}</span> USDC each
         </p>
       </div>
-      <div className="mt-4 grid grid-cols-[1fr_auto] items-end gap-3">
+      <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
         <Field label="Units" htmlFor="qty" hint={`${remaining} left`} error={!valid ? `Choose between 1 and ${remaining}` : undefined}>
           <Input
             id="qty"

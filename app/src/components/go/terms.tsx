@@ -35,7 +35,7 @@ export function GoTerms({ go, decimals = 6, qty = 1 }: { go: GroupOrderView; dec
     },
   ];
   return (
-    <dl className="grid gap-5 sm:grid-cols-2">
+    <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2">
       {rows.map((r) => (
         <div key={r.k} className="flex flex-col gap-1">
           <dt className="flex items-baseline justify-between gap-3">

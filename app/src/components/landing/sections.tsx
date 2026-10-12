@@ -5,7 +5,7 @@ import { ButtonLink } from "@/components/ui/button";
 export function Problem() {
   return (
     <section className="border-y border-line bg-surface">
-      <div className="mx-auto grid max-w-7xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1fr_1fr] lg:px-8 lg:py-28">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-20">
         <div>
           <h2 className="font-display text-3xl font-semibold leading-tight text-ink sm:text-4xl">
             Fandom runs on group orders. Group orders run on hope.
@@ -17,7 +17,7 @@ export function Problem() {
             Pix is instant and irreversible, and buyer protection does not cover a transfer to a person. Honest organizers pay for it too: every new order starts from zero trust.
           </p>
         </div>
-        <dl className="grid gap-6 sm:grid-cols-2">
+        <dl className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <StatBlock
             value="R$ 460k"
             label="collected by one organizer for BTS light sticks in Bahia before vanishing, September 2026. About 1,000 fans."
@@ -85,12 +85,12 @@ const STEPS = [
 
 export function HowItWorks() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
       <div className="max-w-2xl">
         <h2 className="font-display text-3xl font-semibold leading-tight text-ink sm:text-4xl">Money moves only when the order does.</h2>
         <p className="mt-4 text-[17px] leading-relaxed text-ink-2">Four steps, each one enforced by the program, not by promises.</p>
       </div>
-      <ol className="mt-12 grid gap-px overflow-hidden rounded-[var(--r-card)] border border-line bg-line md:grid-cols-2">
+      <ol className="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-[var(--r-card)] border border-line bg-line md:grid-cols-2">
         {STEPS.map((s) => (
           <li key={s.title} className="flex gap-5 bg-surface p-7 lg:p-9">
             <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent-ink">
@@ -103,7 +103,7 @@ export function HowItWorks() {
           </li>
         ))}
       </ol>
-      <div className="mt-8">
+      <div className="mt-6">
         <Link href="/how-it-works" className="inline-flex items-center gap-1.5 text-[15px] font-medium text-ink underline-offset-4 hover:underline">
           Read the full safety rules <ArrowRight size={16} />
         </Link>
@@ -115,7 +115,7 @@ export function HowItWorks() {
 export function TwoSides() {
   return (
     <section className="border-y border-line bg-surface">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:py-28">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:gap-16 lg:px-8 lg:py-20">
         <div className="flex flex-col">
           <h2 className="font-display text-3xl font-semibold leading-tight text-ink">For buyers</h2>
           <ul className="mt-6 flex flex-col gap-4 text-[16px] leading-relaxed text-ink-2">
@@ -147,10 +147,10 @@ export function TwoSides() {
 
 export function WhySolana() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
-      <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
+    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16">
         <h2 className="font-display text-3xl font-semibold leading-tight text-ink sm:text-4xl">Why this needs Solana, not a spreadsheet.</h2>
-        <div className="grid gap-8 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <Point title="Fees under a cent" body="Per-buyer settlement on R$ 40 items only works when a transaction costs less than a text message." />
           <Point title="Final in seconds" body="Buyers who grew up on Pix expect instant. Refunds and payouts land before the toast disappears." />
           <Point title="Links that pay" body="Every order is a Blink. Paste it in a thread or a Discord and it renders as a join button." />
@@ -173,7 +173,7 @@ function Point({ title, body }: { title: string; body: string }) {
 export function FinalCta() {
   return (
     <section className="border-t border-line bg-ink text-ink-inverse">
-      <div className="mx-auto flex max-w-7xl flex-col items-start gap-8 px-4 py-20 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8 lg:py-24">
+      <div className="mx-auto flex max-w-7xl flex-col items-start gap-6 px-4 py-14 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8 lg:py-20">
         <div className="max-w-xl">
           <h2 className="font-display text-3xl font-semibold leading-tight sm:text-4xl">The next group order you join should not require faith.</h2>
           <p className="mt-4 text-[17px] leading-relaxed text-ink-inverse/75">Open on Solana devnet today. Test USDC is free.</p>

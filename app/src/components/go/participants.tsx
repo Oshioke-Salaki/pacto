@@ -6,7 +6,7 @@ export function Participants({ list, now, decimals = 6 }: { list: ParticipationV
     return <p className="text-[15px] text-ink-2">No buyers yet. Share the link to get the first one.</p>;
   }
   return (
-    <ul className="grid gap-2 sm:grid-cols-2">
+    <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
       {list.map((p) => (
         <li key={p.address} className="flex items-center justify-between rounded-xl border border-line bg-surface px-4 py-3">
           <div className="min-w-0">

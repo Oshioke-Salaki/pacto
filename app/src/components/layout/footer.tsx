@@ -5,7 +5,7 @@ import { explorerUrl, PROGRAM_ID } from "@/lib/solana/cluster";
 export function Footer() {
   return (
     <footer className="border-t border-line bg-bg">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_1fr_1fr] lg:px-8">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-4 py-10 sm:px-6 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] lg:px-8">
         <div className="max-w-sm">
           <div className="flex items-center gap-2.5">
             <Mark size={24} />

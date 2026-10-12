@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Explore group orders" };
 
 export default function ExplorePage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h1 className="font-display text-3xl font-semibold text-ink sm:text-4xl">Open group orders</h1>
@@ -37,7 +37,7 @@ async function Orders() {
 
   if (orders.length === 0) {
     return (
-      <div className="mt-10">
+      <div className="mt-8">
         <EmptyState
           title="No orders yet"
           body="Be the first organizer. Create an order, share the link, and watch the vault fill."
@@ -56,12 +56,12 @@ async function Orders() {
 
 function Grid({ title, orders, now, decimals, empty }: { title: string; orders: GroupOrderView[]; now: number; decimals: number; empty?: string }) {
   return (
-    <section className="mt-10">
+    <section className="mt-8">
       <h2 className="text-sm font-medium text-ink-3">{title}</h2>
       {orders.length === 0 ? (
         <p className="mt-3 text-[15px] text-ink-2">{empty}</p>
       ) : (
-        <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {orders.map((o) => (
             <GoCard key={o.address} go={o} now={now} decimals={decimals} />
           ))}
@@ -73,7 +73,7 @@ function Grid({ title, orders, now, decimals, empty }: { title: string; orders: 
 
 function GridSkeleton() {
   return (
-    <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} className="overflow-hidden rounded-[var(--r-card)] border border-line bg-surface">
           <Skeleton className="aspect-[16/10] w-full rounded-none" />

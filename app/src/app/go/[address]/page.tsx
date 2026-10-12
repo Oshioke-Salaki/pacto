@@ -68,20 +68,20 @@ async function Content({ params }: Params) {
           : null;
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
       <nav className="text-[13px] text-ink-3" aria-label="Breadcrumb">
         <Link href="/explore" className="hover:text-ink">Explore</Link> <span aria-hidden>/</span> {shortAddress(go.address)}
       </nav>
 
-      <div className="mt-6 grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
+      <div className="mt-5 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-12">
         {/* Left: story */}
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-7">
           <div>
             <div className="flex flex-wrap items-center gap-3">
               <StatusChip status={go.status} />
               <span className="text-[13px] text-ink-2">{STATUS_DESCRIPTION[go.status]}</span>
             </div>
-            <h1 className="font-display mt-4 text-3xl font-semibold leading-tight text-ink sm:text-4xl">{go.title}</h1>
+            <h1 className="font-display mt-3 text-3xl font-semibold leading-tight text-ink sm:text-4xl">{go.title}</h1>
             <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-ink-2">{go.description}</p>
             {go.detailsUri ? (
               <a href={go.detailsUri} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-[15px] font-medium text-ink underline-offset-4 hover:underline">
@@ -146,7 +146,7 @@ async function Content({ params }: Params) {
             <div className="mt-3">
               <ShareRow address={go.address} title={go.title} />
             </div>
-            <p className="mt-4 text-[13px] text-ink-3">
+            <p className="mt-4 break-all text-[13px] text-ink-3">
               Order account{" "}
               <a href={explorerUrl("address", go.address)} target="_blank" rel="noreferrer" className="font-mono underline-offset-2 hover:underline">
                 {go.address}
@@ -176,9 +176,9 @@ function Mini({ label, value, mono }: { label: string; value: string; mono?: boo
 
 function PageSkeleton() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
       <Skeleton className="h-4 w-32" />
-      <div className="mt-6 grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
+      <div className="mt-5 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-12">
         <div className="flex flex-col gap-6">
           <Skeleton className="h-7 w-24" />
           <Skeleton className="h-10 w-3/4" />

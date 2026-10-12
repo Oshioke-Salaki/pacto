@@ -43,14 +43,14 @@ async function Content({ params }: Params) {
   const now = unixNow();
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <p className="text-[13px] text-ink-3">Organizer</p>
       <h1 className="font-display mt-1 break-all font-mono text-2xl font-semibold text-ink sm:text-3xl">{address}</h1>
       <a href={explorerUrl("address", address)} target="_blank" rel="noreferrer" className="mt-2 inline-block text-[13px] text-ink-2 underline-offset-2 hover:underline">
         View on Solana Explorer
       </a>
 
-      <Card className="mt-8 grid gap-6 p-6 sm:grid-cols-2 lg:grid-cols-5">
+      <Card className="mt-6 grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 lg:grid-cols-5">
         <Stat label="Completed orders" value={stats.completed} />
         <Stat label="Active" value={stats.active} />
         <Stat label="Volume settled" value={`${formatUnits(stats.volumeSettled, decimals, 0)} USDC`} />
@@ -58,14 +58,14 @@ async function Content({ params }: Params) {
         <Stat label="Disputes lost" value={stats.disputesLost} sub={stats.disputesLost === 0 && stats.completed > 0 ? "Clean record" : undefined} />
       </Card>
 
-      <section className="mt-12">
+      <section className="mt-10">
         <h2 className="font-display text-xl font-semibold text-ink">Orders</h2>
         {orders.length === 0 ? (
           <div className="mt-4">
             <EmptyState title="No orders yet" body="This wallet has not organized a group order on Pacto." />
           </div>
         ) : (
-          <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {orders.map((o) => (
               <GoCard key={o.address} go={o} now={now} decimals={decimals} />
             ))}

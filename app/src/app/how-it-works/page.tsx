@@ -20,15 +20,15 @@ const RULES: { title: string; body: string }[] = [
 
 export default function HowItWorksPage() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <h1 className="font-display text-3xl font-semibold text-ink sm:text-4xl">How Pacto works</h1>
       <p className="mt-3 max-w-2xl text-[17px] leading-relaxed text-ink-2">
         Pacto is a Solana program plus this website. The program holds the money and enforces the rules. The website just makes them easy to use.
       </p>
 
-      <section id="safety" className="mt-12">
+      <section id="safety" className="mt-10">
         <h2 className="font-display text-2xl font-semibold text-ink">Safety rules</h2>
-        <ol className="mt-6 grid gap-x-10 gap-y-8 sm:grid-cols-2">
+        <ol className="mt-5 grid grid-cols-1 gap-x-10 gap-y-6 sm:grid-cols-2">
           {RULES.map((r) => (
             <li key={r.title} className="border-t border-line pt-4">
               <h3 className="font-display text-lg font-semibold text-ink">{r.title}</h3>
@@ -38,23 +38,23 @@ export default function HowItWorksPage() {
         </ol>
       </section>
 
-      <section className="mt-14">
+      <section className="mt-10">
         <h2 className="font-display text-2xl font-semibold text-ink">Fees</h2>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
           Buyers pay nothing beyond the item price and Solana network fees (a fraction of a cent). Organizers pay a protocol fee on each payout, fixed at the moment the order is created so later changes never affect a running order.
         </p>
       </section>
 
-      <section className="mt-14">
+      <section className="mt-10">
         <h2 className="font-display text-2xl font-semibold text-ink">Verify it yourself</h2>
         <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
           The program is open source and deployed at{" "}
-          <a href={explorerUrl("address", PROGRAM_ID.toBase58())} target="_blank" rel="noreferrer" className="font-mono text-ink underline-offset-2 hover:underline">
+          <a href={explorerUrl("address", PROGRAM_ID.toBase58())} target="_blank" rel="noreferrer" className="break-all font-mono text-ink underline-offset-2 hover:underline">
             {PROGRAM_ID.toBase58()}
           </a>
           . Every order page links to its on-chain account.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
           <ButtonLink href="/explore">Explore open orders</ButtonLink>
           <Link href="/create" className="inline-flex h-11 items-center px-2 text-[15px] font-medium text-ink underline-offset-4 hover:underline">
             Start a group order

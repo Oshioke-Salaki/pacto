@@ -19,7 +19,7 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[var(--r-card)] border border-dashed border-line-2 bg-surface px-6 py-14 text-center">
+    <div className="rounded-[var(--r-card)] border border-dashed border-line-2 bg-surface px-6 py-12 text-center">
       <h3 className="font-display text-xl font-semibold text-ink">{title}</h3>
       <p className="mx-auto mt-2 max-w-md text-[15px] leading-relaxed text-ink-2">{body}</p>
       {action ? <div className="mt-6 flex justify-center">{action}</div> : null}
