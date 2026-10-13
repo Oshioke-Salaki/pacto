@@ -2,12 +2,15 @@ import Link from "next/link";
 import { Logo } from "@/components/brand/logo";
 import { WalletButton } from "@/components/wallet/wallet-button";
 import { MobileNav } from "@/components/layout/mobile-nav";
+import { LanguageToggle } from "@/components/layout/language-toggle";
+import { T } from "@/lib/i18n/provider";
+import type { MessageKey } from "@/lib/i18n/messages";
 import { IS_DEVNET } from "@/lib/solana/cluster";
 
-export const NAV_LINKS = [
-  { href: "/explore", label: "Explore" },
-  { href: "/create", label: "Start a group order" },
-  { href: "/dashboard", label: "My orders" },
+export const NAV_LINKS: { href: string; label: MessageKey }[] = [
+  { href: "/explore", label: "nav.explore" },
+  { href: "/create", label: "nav.create" },
+  { href: "/dashboard", label: "nav.orders" },
 ];
 
 export function Nav() {
@@ -23,7 +26,7 @@ export function Nav() {
                 href={l.href}
                 className="rounded-full px-3.5 py-2 text-sm text-ink-2 transition-colors hover:bg-surface-2 hover:text-ink"
               >
-                {l.label}
+                <T k={l.label} />
               </Link>
             ))}
           </nav>
@@ -34,6 +37,7 @@ export function Nav() {
               Devnet
             </span>
           ) : null}
+          <LanguageToggle className="hidden sm:inline-flex" />
           <div className="hidden sm:block">
             <WalletButton size="sm" />
           </div>

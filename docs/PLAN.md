@@ -33,7 +33,11 @@ The docs list the Superteam deadline as 2026-10-12 23:59 BRT. Confirm on the Ear
 Small, visible, low risk.
 
 - [x] Organizer reputation card: completed orders, disputes, volume settled, with a share image for X (M). Image at `/organizer/[address]/opengraph-image`, share buttons on the organizer page
-- [ ] Portuguese toggle with a strings table, landing and order page first (M)
+- [ ] Portuguese toggle with a strings table (M). Strings live in `app/src/lib/i18n/messages.ts`; use `<T k="..." />` in server components and `useT()` in client ones
+  - [x] Infrastructure, EN/PT toggle in nav, browser-language default, landing page, nav, footer
+  - [ ] Wallet button, GO card and status chips, explore page
+  - [ ] Order page (action panel, timeline, terms, participants)
+  - [ ] Create form, dashboard, how-it-works, program error messages
 - [ ] Cover image upload instead of pasted URLs (Vercel Blob) (M)
 - [ ] Empty states and first-run guidance on dashboard and explore (S)
 - [ ] Register the Blink domain with Dialect so links unfurl on X (S)

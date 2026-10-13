@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { LocaleSync } from "@/lib/i18n/provider";
 import { Nav } from "@/components/layout/nav";
 import { Footer } from "@/components/layout/footer";
 import { SITE_URL } from "@/lib/solana/cluster";
@@ -38,9 +39,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Providers>
-          <Nav />
-          <main className="flex-1">{children}</main>
-          <Footer />
+          <LocaleSync>
+            <Nav />
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </LocaleSync>
         </Providers>
       </body>
     </html>
