@@ -20,12 +20,13 @@ The docs list the Superteam deadline as 2026-10-12 23:59 BRT. Confirm on the Ear
 - [ ] Walk the live site end to end on devnet with two wallets: create, join, lock, ship, confirm, refund (S)
 - [ ] Import `keys/arbiter.json` into a wallet and test dispute resolution (S)
 - [x] Logo as SVG and PNG in `app/public/brand/` (S)
-- [ ] Project name, short description, chains and tools text (S)
+- [x] Project name, short description, chains and tools text (S). In SUBMISSION.md
 - [ ] Team bios, one paragraph each. The team must include at least one woman (S)
 - [ ] Record the pitch video, 2 to 3 minutes, per [PITCH.md](PITCH.md) (M)
 - [ ] Record the demo video, up to 3 minutes: create, join via web, join via Blink, lock, ship, confirm, refund (M)
 - [ ] Assemble the shared submission folder and submit (S)
-- [ ] Final check: `cargo test`, then in `app/`: `pnpm typecheck && pnpm lint && pnpm build` (S)
+- [x] Final check, app side: `pnpm typecheck && pnpm lint && pnpm build` all pass (run `pnpm exec next typegen` first on a fresh clone) (S)
+- [ ] Final check, program side: `cargo test` needs the Anchor CLI and Solana toolchain to build `pacto.so` first; neither is installed on this machine (S)
 
 ## Phase 1: Quick wins that sharpen the demo
 
