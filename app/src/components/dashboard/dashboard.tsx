@@ -13,6 +13,7 @@ import { useNow } from "@/hooks/use-now";
 import { formatUnits, relativeTime } from "@/lib/pacto/format";
 import { allowedActions, type GroupOrderView, type ParticipationView } from "@/lib/pacto/state";
 import { IS_DEVNET } from "@/lib/solana/cluster";
+import { intlTag, useCount, useLocale, useT } from "@/lib/i18n/provider";
 
 interface OrganizerResp {
   orders: GroupOrderView[];
@@ -27,6 +28,8 @@ export function Dashboard() {
   const { setVisible } = useWalletModal();
   const pk = publicKey?.toBase58() ?? null;
   const now = useNow();
+  const t = useT();
+  const count = useCount();
 
   const mine = useQuery<OrganizerResp>({
     queryKey: ["dash-organizer", pk],
@@ -42,9 +45,9 @@ export function Dashboard() {
   if (!pk) {
     return (
       <EmptyState
-        title="Connect a wallet to see your orders"
-        body="Orders you organize and orders you joined show up here with the next step for each."
-        action={<Button onClick={() => setVisible(true)}>Connect wallet</Button>}
+        title={t("dash.connectTitle")}
+        body={t("dash.connectBody")}
+        action={<Button onClick={() => setVisible(true)}>{t("wallet.connect")}</Button>}
       />
     );
   }
@@ -53,22 +56,22 @@ export function Dashboard() {
     <div className="flex flex-col gap-10">
       {IS_DEVNET ? (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3">
-          <p className="text-[14px] text-ink-2">You are on devnet. Test USDC is free, and nothing here is real money.</p>
+          <p className="text-[14px] text-ink-2">{t("dash.devnet")}</p>
           <FaucetButton />
         </div>
       ) : null}
 
       <section>
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-xl font-semibold text-ink">Orders you joined</h2>
+          <h2 className="font-display text-xl font-semibold text-ink">{t("dash.joined")}</h2>
         </div>
         {joined.isLoading ? (
           <ListSkeleton />
         ) : !joined.data || joined.data.orders.length === 0 ? (
           <p className="mt-3 text-[15px] text-ink-2">
-            You have not joined any order yet.{" "}
+            {t("dash.noneJoined")}{" "}
             <Link href="/explore" className="font-medium text-ink underline-offset-4 hover:underline">
-              Explore open orders
+              {t("dash.exploreLink")}
             </Link>
             .
           </p>
@@ -77,7 +80,7 @@ export function Dashboard() {
             {joined.data.orders.map((go) => {
               const p = joined.data!.participations.find((x) => x.groupOrder === go.address) ?? null;
               const next = allowedActions(go, { pubkey: pk, participation: p }, now).find((a) => a.id !== "join");
-              return <Row key={go.address} go={go} now={now} next={next?.label} sub={p ? `${p.qty} unit${p.qty === 1 ? "" : "s"}, ${formatUnits(p.paid)} USDC paid` : undefined} />;
+              return <Row key={go.address} go={go} now={now} next={next ? t(`act.${next.id}`) : undefined} sub={p ? t("dash.paidSub", { units: count("unit", p.qty), amount: formatUnits(p.paid) }) : undefined} />;
             })}
           </ul>
         )}
@@ -85,20 +88,20 @@ export function Dashboard() {
 
       <section>
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-xl font-semibold text-ink">Orders you organize</h2>
+          <h2 className="font-display text-xl font-semibold text-ink">{t("dash.organized")}</h2>
           <ButtonLink href="/create" size="sm" variant="secondary">
-            New order
+            {t("dash.newOrder")}
           </ButtonLink>
         </div>
         {mine.isLoading ? (
           <ListSkeleton />
         ) : !mine.data || mine.data.orders.length === 0 ? (
-          <p className="mt-3 text-[15px] text-ink-2">You have not organized an order yet.</p>
+          <p className="mt-3 text-[15px] text-ink-2">{t("dash.noneOrganized")}</p>
         ) : (
           <ul className="mt-4 flex flex-col gap-2">
             {mine.data.orders.map((go) => {
               const next = allowedActions(go, { pubkey: pk, participation: null }, now).find((a) => a.id !== "join");
-              return <Row key={go.address} go={go} now={now} next={next?.label} sub={`${go.participants} buyer${go.participants === 1 ? "" : "s"}, ${formatUnits(go.totalPaid)} USDC pooled`} />;
+              return <Row key={go.address} go={go} now={now} next={next ? t(`act.${next.id}`) : undefined} sub={t("dash.pooledSub", { buyers: count("buyer", go.participants), amount: formatUnits(go.totalPaid) })} />;
             })}
           </ul>
         )}
@@ -108,8 +111,14 @@ export function Dashboard() {
 }
 
 function Row({ go, now, next, sub }: { go: GroupOrderView; now: number; next?: string; sub?: string }) {
+  const t = useT();
+  const tag = intlTag(useLocale());
   const when =
-    go.status === "open" ? (now < go.joinDeadline ? `closes ${relativeTime(go.joinDeadline, now)}` : "deadline passed") : null;
+    go.status === "open"
+      ? now < go.joinDeadline
+        ? t("dash.closes", { when: relativeTime(go.joinDeadline, now, tag) })
+        : t("dash.deadlinePassed")
+      : null;
   return (
     <li>
       <Link href={`/go/${go.address}`} className="flex items-center gap-4 rounded-xl border border-line bg-surface px-4 py-3.5 transition-colors hover:bg-surface-2">

@@ -18,47 +18,49 @@ import { explainError } from "@/lib/pacto/errors";
 import { formatUnits, parseUnits } from "@/lib/pacto/format";
 import type { ConfigView } from "@/lib/pacto/state";
 import { USDC_MINT } from "@/lib/solana/cluster";
+import { tNow, useT } from "@/lib/i18n/provider";
 
 const DAY = 86_400;
 
-const schema = z
-  .object({
-    title: z.string().trim().min(3, "At least 3 characters").max(64, "Max 64 characters"),
-    description: z.string().trim().min(10, "Tell buyers what they get").max(280, "Max 280 characters"),
-    detailsUri: z.union([z.literal(""), z.string().trim().url("Must be a valid link").max(200, "Max 200 characters")]),
-    imageUri: z.union([z.literal(""), z.string().trim().url("Must be a valid link").max(200, "Max 200 characters")]),
-    unitPrice: z.string().refine((v) => {
-      try {
-        return parseUnits(v) > 0n;
-      } catch {
-        return false;
-      }
-    }, "Enter a price above zero"),
-    minQty: z.coerce.number().int().min(1, "At least 1"),
-    maxQty: z.coerce.number().int().min(1, "At least 1"),
-    advancePct: z.coerce.number().min(0).max(80),
-    deadline: z.string().min(1, "Pick a date"),
-    shipDays: z.coerce.number().int().min(1, "At least 1 day").max(120, "Max 120 days"),
-    deliveryDays: z.coerce.number().int().min(1, "At least 1 day").max(90, "Max 90 days"),
-    arbiter: z.string().trim(),
-  })
-  .refine((v) => v.maxQty >= v.minQty, { message: "Max must be at least the minimum", path: ["maxQty"] })
-  .refine((v) => new Date(v.deadline).getTime() > Date.now() + 3600_000, { message: "Deadline must be at least an hour away", path: ["deadline"] })
-  .refine((v) => new Date(v.deadline).getTime() < Date.now() + 180 * DAY * 1000, { message: "Deadline must be within 180 days", path: ["deadline"] })
-  .refine(
-    (v) => {
-      if (!v.arbiter) return true;
-      try {
-        new PublicKey(v.arbiter);
-        return true;
-      } catch {
-        return false;
-      }
-    },
-    { message: "Not a valid Solana address", path: ["arbiter"] },
-  );
+const buildSchema = () =>
+  z
+    .object({
+      title: z.string().trim().min(3, tNow("v.min3")).max(64, tNow("v.max64")),
+      description: z.string().trim().min(10, tNow("v.desc10")).max(280, tNow("v.max280")),
+      detailsUri: z.union([z.literal(""), z.string().trim().url(tNow("v.link")).max(200, tNow("v.max200"))]),
+      imageUri: z.union([z.literal(""), z.string().trim().url(tNow("v.link")).max(200, tNow("v.max200"))]),
+      unitPrice: z.string().refine((v) => {
+        try {
+          return parseUnits(v) > 0n;
+        } catch {
+          return false;
+        }
+      }, tNow("v.price")),
+      minQty: z.coerce.number().int().min(1, tNow("v.atLeast1")),
+      maxQty: z.coerce.number().int().min(1, tNow("v.atLeast1")),
+      advancePct: z.coerce.number().min(0).max(80),
+      deadline: z.string().min(1, tNow("v.pickDate")),
+      shipDays: z.coerce.number().int().min(1, tNow("v.day1")).max(120, tNow("v.ship120")),
+      deliveryDays: z.coerce.number().int().min(1, tNow("v.day1")).max(90, tNow("v.deliver90")),
+      arbiter: z.string().trim(),
+    })
+    .refine((v) => v.maxQty >= v.minQty, { message: tNow("v.maxMin"), path: ["maxQty"] })
+    .refine((v) => new Date(v.deadline).getTime() > Date.now() + 3600_000, { message: tNow("v.hourAway"), path: ["deadline"] })
+    .refine((v) => new Date(v.deadline).getTime() < Date.now() + 180 * DAY * 1000, { message: tNow("v.within180"), path: ["deadline"] })
+    .refine(
+      (v) => {
+        if (!v.arbiter) return true;
+        try {
+          new PublicKey(v.arbiter);
+          return true;
+        } catch {
+          return false;
+        }
+      },
+      { message: tNow("v.address"), path: ["arbiter"] },
+    );
 
-type Values = z.infer<typeof schema>;
+type Values = z.infer<ReturnType<typeof buildSchema>>;
 type Errors = Partial<Record<keyof Values, string>>;
 
 function defaultDeadline(nowSecs: number) {
@@ -73,6 +75,7 @@ export function CreateForm() {
   const wallet = useWallet();
   const { setVisible } = useWalletModal();
   const router = useRouter();
+  const t = useT();
   const [busy, setBusy] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [values, setValues] = useState<Values>({
@@ -122,7 +125,7 @@ export function CreateForm() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const parsed = schema.safeParse(effective);
+    const parsed = buildSchema().safeParse(effective);
     if (!parsed.success) {
       const next: Errors = {};
       for (const issue of parsed.error.issues) {
@@ -133,7 +136,7 @@ export function CreateForm() {
       return;
     }
     if (parsed.data.advancePct > maxAdvancePct) {
-      setErrors({ advancePct: `Protocol maximum is ${maxAdvancePct}%` });
+      setErrors({ advancePct: t("cf.maxAdvance", { max: maxAdvancePct }) });
       return;
     }
     if (!wallet.publicKey) {
@@ -161,7 +164,7 @@ export function CreateForm() {
         arbiter: d.arbiter ? new PublicKey(d.arbiter) : null,
       });
       await sendInstructions(connection, wallet, [ix]);
-      toast.success("Group order created");
+      toast.success(t("cf.created"));
       router.push(`/go/${groupOrder.toBase58()}`);
     } catch (err) {
       console.error(err);
@@ -175,52 +178,52 @@ export function CreateForm() {
     <form onSubmit={submit} className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
       <div className="flex flex-col gap-6">
         <Card className="flex flex-col gap-5 p-6">
-          <h2 className="font-display text-lg font-semibold text-ink">What are you ordering?</h2>
-          <Field label="Title" htmlFor="title" error={errors.title} right={`${values.title.length}/64`}>
-            <Input id="title" value={values.title} maxLength={64} onChange={(e) => set("title", e.target.value)} placeholder="ARMY Bomb Ver. 4 group order, Sao Paulo" />
+          <h2 className="font-display text-lg font-semibold text-ink">{t("cf.what")}</h2>
+          <Field label={t("cf.title")} htmlFor="title" error={errors.title} right={`${values.title.length}/64`}>
+            <Input id="title" value={values.title} maxLength={64} onChange={(e) => set("title", e.target.value)} placeholder={t("cf.titlePh")} />
           </Field>
-          <Field label="Description" htmlFor="description" error={errors.description} right={`${values.description.length}/280`} hint="What is included, where you ship, how re-shipping works.">
+          <Field label={t("cf.description")} htmlFor="description" error={errors.description} right={`${values.description.length}/280`} hint={t("cf.descriptionHint")}>
             <Textarea id="description" value={values.description} maxLength={280} onChange={(e) => set("description", e.target.value)} />
           </Field>
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Link to your order post" htmlFor="details" error={errors.detailsUri} hint="X, Instagram or Discord post with the full details.">
+            <Field label={t("cf.details")} htmlFor="details" error={errors.detailsUri} hint={t("cf.detailsHint")}>
               <Input id="details" inputMode="url" value={values.detailsUri} onChange={(e) => set("detailsUri", e.target.value)} placeholder="https://x.com/you/status/..." />
             </Field>
-            <Field label="Cover image URL" htmlFor="image" error={errors.imageUri} hint="Optional. Direct link to a JPG or PNG.">
+            <Field label={t("cf.image")} htmlFor="image" error={errors.imageUri} hint={t("cf.imageHint")}>
               <Input id="image" inputMode="url" value={values.imageUri} onChange={(e) => set("imageUri", e.target.value)} placeholder="https://..." />
             </Field>
           </div>
         </Card>
 
         <Card className="flex flex-col gap-5 p-6">
-          <h2 className="font-display text-lg font-semibold text-ink">Pricing and size</h2>
+          <h2 className="font-display text-lg font-semibold text-ink">{t("cf.pricing")}</h2>
           <div className="grid gap-5 sm:grid-cols-3">
-            <Field label="Price per unit" htmlFor="price" error={errors.unitPrice}>
+            <Field label={t("cf.price")} htmlFor="price" error={errors.unitPrice}>
               <InputAdornment id="price" inputMode="decimal" value={values.unitPrice} onChange={(e) => set("unitPrice", e.target.value)} placeholder="72.00">
                 USDC
               </InputAdornment>
             </Field>
-            <Field label="Minimum units" htmlFor="min" error={errors.minQty} hint="Below this, everyone is refunded.">
+            <Field label={t("cf.min")} htmlFor="min" error={errors.minQty} hint={t("cf.minHint")}>
               <Input id="min" type="number" min={1} value={values.minQty} onChange={(e) => set("minQty", Number(e.target.value))} />
             </Field>
-            <Field label="Maximum units" htmlFor="max" error={errors.maxQty}>
+            <Field label={t("cf.max")} htmlFor="max" error={errors.maxQty}>
               <Input id="max" type="number" min={1} value={values.maxQty} onChange={(e) => set("maxQty", Number(e.target.value))} />
             </Field>
           </div>
-          <Field label="Join deadline" htmlFor="deadline" error={errors.deadline} hint="After this, nobody can join. You can lock earlier once the minimum is met.">
+          <Field label={t("cf.deadline")} htmlFor="deadline" error={errors.deadline} hint={t("cf.deadlineHint")}>
             <Input id="deadline" type="datetime-local" value={deadline} onChange={(e) => set("deadline", e.target.value)} className="sm:max-w-xs" />
           </Field>
         </Card>
 
         <Card className="flex flex-col gap-5 p-6">
-          <h2 className="font-display text-lg font-semibold text-ink">Trust terms</h2>
-          <p className="-mt-3 text-[14px] leading-relaxed text-ink-2">Buyers see these before they pay. Lower advance and shorter windows win more buyers.</p>
+          <h2 className="font-display text-lg font-semibold text-ink">{t("cf.trust")}</h2>
+          <p className="-mt-3 text-[14px] leading-relaxed text-ink-2">{t("cf.trustSub")}</p>
           <Field
-            label="Advance you receive at lock"
+            label={t("cf.advance")}
             htmlFor="advance"
             error={errors.advancePct}
-            right={`${values.advancePct}%  (max ${maxAdvancePct}%)`}
-            hint="Working capital to place the bulk order. The rest is released per buyer on delivery."
+            right={t("cf.advanceRight", { pct: values.advancePct, max: maxAdvancePct })}
+            hint={t("cf.advanceHint")}
           >
             <input
               id="advance"
@@ -234,18 +237,18 @@ export function CreateForm() {
             />
           </Field>
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Days to ship after lock" htmlFor="ship" error={errors.shipDays} hint="Miss it and buyers can reclaim their held share.">
+            <Field label={t("cf.shipDays")} htmlFor="ship" error={errors.shipDays} hint={t("cf.shipDaysHint")}>
               <Input id="ship" type="number" min={1} max={120} value={values.shipDays} onChange={(e) => set("shipDays", Number(e.target.value))} />
             </Field>
-            <Field label="Days for buyers to confirm" htmlFor="delivery" error={errors.deliveryDays} hint="After shipping. Unconfirmed, undisputed shares release to you afterwards.">
+            <Field label={t("cf.deliveryDays")} htmlFor="delivery" error={errors.deliveryDays} hint={t("cf.deliveryDaysHint")}>
               <Input id="delivery" type="number" min={1} max={90} value={values.deliveryDays} onChange={(e) => set("deliveryDays", Number(e.target.value))} />
             </Field>
           </div>
           <details className="border-t border-line pt-4">
-            <summary className="cursor-pointer list-none text-sm font-medium text-ink-2 hover:text-ink">Advanced: custom arbiter <span aria-hidden className="ml-1 text-ink-3">+</span></summary>
+            <summary className="cursor-pointer list-none text-sm font-medium text-ink-2 hover:text-ink">{t("cf.customArbiter")} <span aria-hidden className="ml-1 text-ink-3">+</span></summary>
             <div className="mt-4">
-              <Field label="Arbiter wallet" htmlFor="arbiter" error={errors.arbiter} hint="Leave empty to use the Pacto arbiter. Cannot be your own wallet.">
-                <Input id="arbiter" value={values.arbiter} onChange={(e) => set("arbiter", e.target.value)} placeholder="Solana address" className="font-mono" />
+              <Field label={t("cf.arbiter")} htmlFor="arbiter" error={errors.arbiter} hint={t("cf.arbiterHint")}>
+                <Input id="arbiter" value={values.arbiter} onChange={(e) => set("arbiter", e.target.value)} placeholder={t("cf.arbiterPh")} className="font-mono" />
               </Field>
             </div>
           </details>
@@ -254,20 +257,20 @@ export function CreateForm() {
 
       <aside className="lg:sticky lg:top-24">
         <Card className="p-6">
-          <h2 className="font-display text-lg font-semibold text-ink">Summary</h2>
+          <h2 className="font-display text-lg font-semibold text-ink">{t("cf.summary")}</h2>
           <dl className="mt-4 flex flex-col gap-3 text-[14px]">
-            <Row k="Per unit" v={preview ? `${formatUnits(preview.unit)} USDC` : "-"} />
-            <Row k="Pool at minimum" v={preview ? `${formatUnits(preview.atMin)} USDC` : "-"} />
-            <Row k="Your advance at lock" v={preview ? `${formatUnits(preview.advance)} USDC` : "-"} />
-            <Row k="Protocol fee" v={`${feePct}% of payouts`} />
-            <Row k="Currency" v="USDC on Solana" />
+            <Row k={t("cf.perUnit")} v={preview ? `${formatUnits(preview.unit)} USDC` : "-"} />
+            <Row k={t("cf.pool")} v={preview ? `${formatUnits(preview.atMin)} USDC` : "-"} />
+            <Row k={t("cf.yourAdvance")} v={preview ? `${formatUnits(preview.advance)} USDC` : "-"} />
+            <Row k={t("cf.fee")} v={t("cf.feeValue", { pct: feePct })} />
+            <Row k={t("cf.currency")} v={t("cf.currencyValue")} />
           </dl>
           <p className="mt-5 text-[13px] leading-relaxed text-ink-2">
-            Creating an order costs a small amount of SOL for account rent. Buyers pay into an escrow vault controlled by the program, never your wallet.
+            {t("cf.rentNote")}
           </p>
-          {paused ? <p className="mt-3 rounded-lg bg-warn-soft px-3 py-2 text-[13px] text-warn">Pacto is paused. New orders are temporarily disabled.</p> : null}
+          {paused ? <p className="mt-3 rounded-lg bg-warn-soft px-3 py-2 text-[13px] text-warn">{t("cf.paused")}</p> : null}
           <Button type="submit" size="lg" className="mt-5 w-full" loading={busy} disabled={paused}>
-            {wallet.publicKey ? "Create group order" : "Connect wallet to create"}
+            {wallet.publicKey ? t("cf.submit") : t("cf.connect")}
           </Button>
         </Card>
       </aside>

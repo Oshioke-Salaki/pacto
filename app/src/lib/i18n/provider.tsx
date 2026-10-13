@@ -53,7 +53,7 @@ export function useT() {
 /** Counted label, e.g. count("unit", 2) gives "2 units". */
 export function useCount() {
   const t = useT();
-  return useCallback((base: "unit" | "day", n: number) => {
+  return useCallback((base: "unit" | "day" | "buyer", n: number) => {
     const p = plural(base, n);
     return t(p.key, p.params);
   }, [t]);
@@ -70,7 +70,7 @@ export function tNow(key: MessageKey, params?: Params): string {
 }
 
 /** Picks the "one" or "other" variant of a counted message, e.g. plural("unit", 2). */
-export function plural(base: "unit" | "day", n: number): { key: MessageKey; params: Params } {
+export function plural(base: "unit" | "day" | "buyer", n: number): { key: MessageKey; params: Params } {
   return { key: `${base}.${n === 1 ? "one" : "other"}`, params: { n } };
 }
 

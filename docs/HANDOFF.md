@@ -47,7 +47,7 @@ The full prioritized to-do list and feature plan lives in [PLAN.md](PLAN.md). Fo
 - Arbiter for the demo is a generated keypair in `keys/arbiter.json` (gitignored). A dispute-resolution UI exists on the order page for whoever connects that wallet.
 - No indexer. `getProgramAccounts` is called server-side with a 15 second cache for the explore list. Fine for hundreds of orders; see ROADMAP for the Helius path.
 - `/api/faucet` keeps its rate limit in memory, so it resets on each serverless cold start. Acceptable for devnet.
-- Portuguese localization is not started. Strings are all in `src/components` and `src/app`; a strings table is the next step.
+- Portuguese (pt-BR) is implemented: strings table in `app/src/lib/i18n/messages.ts`, EN/PT toggle in the nav, browser language as default. Use `<T k="..." />` in server components and `useT()` in client ones; `tNow()` outside React. Translations were written by the agent and need a native-speaker review. Page `<title>` metadata and the Blink API responses are still English. First paint is English, then switches (client-side locale to keep pages static).
 - `bigint-buffer` prints a harmless "Failed to load bindings" warning during build because pnpm skips native build scripts.
 
 ## People and accounts
