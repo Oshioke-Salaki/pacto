@@ -24,6 +24,8 @@ Escrow for group orders on Solana. See [PRD.md](PRD.md) for product, [PROGRAM.md
 
 ## Exact next steps, in order
 
+The full prioritized to-do list and feature plan lives in [PLAN.md](PLAN.md). Follow it; the short list below is the immediate subset.
+
 1. Open https://pacto-oshiokesalakis-projects.vercel.app with Phantom set to devnet. Dashboard has "Get 100 test USDC". Create an order, join it from a second wallet, walk the lifecycle. Dispute resolution needs the arbiter key from `keys/arbiter.json` imported into a wallet.
 2. Record the demo and pitch per [PITCH.md](PITCH.md).
 3. Fill the submission folder per [SUBMISSION.md](SUBMISSION.md) and submit on Earn before 23:59 BRT.
