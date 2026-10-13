@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PublicKey } from "@solana/web3.js";
 import { GoCard } from "@/components/go/go-card";
+import { ShareOrganizer } from "@/components/go/share-organizer";
 import { Card, EmptyState, Skeleton, Stat } from "@/components/ui/card";
 import { fetchMintDecimals, fetchOrganizerOrders, organizerStats } from "@/lib/pacto/reads";
 import { formatUnits, shortAddress, unixNow } from "@/lib/pacto/format";
@@ -12,7 +13,10 @@ type Params = { params: Promise<{ address: string }> };
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { address } = await params;
-  return { title: `Organizer ${shortAddress(address)}` };
+  return {
+    title: `Organizer ${shortAddress(address)}`,
+    description: "Group order track record, read directly from Solana. Money stays in escrow until it arrives.",
+  };
 }
 
 export default function OrganizerPage({ params }: Params) {
@@ -49,6 +53,7 @@ async function Content({ params }: Params) {
       <a href={explorerUrl("address", address)} target="_blank" rel="noreferrer" className="mt-2 inline-block text-[13px] text-ink-2 underline-offset-2 hover:underline">
         View on Solana Explorer
       </a>
+      <ShareOrganizer address={address} completed={stats.completed} />
 
       <Card className="mt-6 grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 lg:grid-cols-5">
         <Stat label="Completed orders" value={stats.completed} />

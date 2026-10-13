@@ -32,7 +32,7 @@ The docs list the Superteam deadline as 2026-10-12 23:59 BRT. Confirm on the Ear
 
 Small, visible, low risk.
 
-- [ ] Organizer reputation card: completed orders, disputes, volume settled, with a share image for X (M)
+- [x] Organizer reputation card: completed orders, disputes, volume settled, with a share image for X (M). Image at `/organizer/[address]/opengraph-image`, share buttons on the organizer page
 - [ ] Portuguese toggle with a strings table, landing and order page first (M)
 - [ ] Cover image upload instead of pasted URLs (Vercel Blob) (M)
 - [ ] Empty states and first-run guidance on dashboard and explore (S)
