@@ -40,7 +40,7 @@ Small, visible, low risk.
   - [x] Program error messages (`explainError` uses `tNow`)
   - [x] Create form (validation messages too), dashboard, how-it-works
 - [ ] Cover image upload instead of pasted URLs (Vercel Blob) (M)
-- [ ] Empty states and first-run guidance on dashboard and explore (S)
+- [x] First-run guidance: "Get started in three steps" card on the dashboard for wallets with no orders (S). Explore already had empty states
 - [ ] Register the Blink domain with Dialect so links unfurl on X (S)
 - [ ] Replace the Unsplash sample photo with owned imagery (S)
 - [ ] Persist the faucet rate limit (KV or similar) instead of in-memory (S)

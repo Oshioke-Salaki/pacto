@@ -425,6 +425,17 @@ export const en = {
   "hiw.verifyTail": ". Every order page links to its on-chain account.",
   "hiw.explore": "Explore open orders",
   "hiw.create": "Start a group order",
+
+  "gs.title": "Get started in three steps",
+  "gs.sub": "Nothing here yet. This is the quickest way to see how Pacto works.",
+  "gs.s1.t": "Get test USDC",
+  "gs.s1.b": "Devnet only. It is free and not real money.",
+  "gs.s2.t": "Join an order",
+  "gs.s2.b": "Pick an open order. Your payment waits in escrow, and you can leave for a full refund until it closes.",
+  "gs.s2.cta": "Browse open orders",
+  "gs.s3.t": "Or start your own",
+  "gs.s3.b": "Set the price and the trust terms, then share one link. It works as a pay button inside X.",
+  "gs.s3.cta": "Start a group order",
 } as const;
 
 export type MessageKey = keyof typeof en;
@@ -866,6 +877,17 @@ export const pt: Record<MessageKey, string> = {
   "hiw.verifyTail": ". Cada página de pedido tem um link para a conta na blockchain.",
   "hiw.explore": "Ver pedidos abertos",
   "hiw.create": "Criar compra em grupo",
+
+  "gs.title": "Comece em três passos",
+  "gs.sub": "Ainda não há nada aqui. Este é o caminho mais rápido para ver como a Pacto funciona.",
+  "gs.s1.t": "Receba USDC de teste",
+  "gs.s1.b": "Só na devnet. É grátis e não é dinheiro de verdade.",
+  "gs.s2.t": "Entre em um pedido",
+  "gs.s2.b": "Escolha um pedido aberto. Seu pagamento fica em custódia, e você pode sair e receber tudo de volta até ele encerrar.",
+  "gs.s2.cta": "Ver pedidos abertos",
+  "gs.s3.t": "Ou crie o seu",
+  "gs.s3.b": "Defina o preço e os termos de confiança e compartilhe um link. Ele funciona como botão de pagamento no X.",
+  "gs.s3.cta": "Criar compra em grupo",
 };
 
 export type Locale = "en" | "pt";

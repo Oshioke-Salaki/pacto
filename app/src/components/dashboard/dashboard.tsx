@@ -9,6 +9,7 @@ import { Button, ButtonLink } from "@/components/ui/button";
 import { EmptyState, Skeleton } from "@/components/ui/card";
 import { StatusChip } from "@/components/ui/status-chip";
 import { FaucetButton } from "@/components/wallet/faucet-button";
+import { GettingStarted } from "@/components/dashboard/getting-started";
 import { useNow } from "@/hooks/use-now";
 import { formatUnits, relativeTime } from "@/lib/pacto/format";
 import { allowedActions, type GroupOrderView, type ParticipationView } from "@/lib/pacto/state";
@@ -52,9 +53,13 @@ export function Dashboard() {
     );
   }
 
+  const empty =
+    !joined.isLoading && !mine.isLoading && (joined.data?.orders.length ?? 0) === 0 && (mine.data?.orders.length ?? 0) === 0;
+
   return (
     <div className="flex flex-col gap-10">
-      {IS_DEVNET ? (
+      {empty ? <GettingStarted /> : null}
+      {IS_DEVNET && !empty ? (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-line bg-surface px-4 py-3">
           <p className="text-[14px] text-ink-2">{t("dash.devnet")}</p>
           <FaucetButton />
