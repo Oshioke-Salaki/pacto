@@ -7,6 +7,7 @@ import { CaretDown, Copy, SignOut, Wallet } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { shortAddress } from "@/lib/pacto/format";
+import { useT } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 
 export function WalletButton({ className, size = "md" }: { className?: string; size?: "sm" | "md" | "lg" }) {
@@ -14,6 +15,7 @@ export function WalletButton({ className, size = "md" }: { className?: string; s
   const { setVisible } = useWalletModal();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const t = useT();
 
   useEffect(() => {
     if (!open) return;
@@ -32,15 +34,15 @@ export function WalletButton({ className, size = "md" }: { className?: string; s
   const copy = useCallback(async () => {
     if (!publicKey) return;
     await navigator.clipboard.writeText(publicKey.toBase58());
-    toast.success("Address copied");
+    toast.success(t("wallet.copied"));
     setOpen(false);
-  }, [publicKey]);
+  }, [publicKey, t]);
 
   if (!publicKey) {
     return (
       <Button size={size} className={className} onClick={() => setVisible(true)} loading={connecting}>
         <Wallet size={18} weight="bold" />
-        Connect wallet
+        {t("wallet.connect")}
       </Button>
     );
   }
@@ -63,7 +65,7 @@ export function WalletButton({ className, size = "md" }: { className?: string; s
           className="absolute right-0 top-[calc(100%+8px)] z-40 w-56 overflow-hidden rounded-xl border border-line bg-surface p-1.5 shadow-md"
         >
           <button role="menuitem" onClick={copy} className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-ink hover:bg-surface-2">
-            <Copy size={16} /> Copy address
+            <Copy size={16} /> {t("wallet.copy")}
           </button>
           <button
             role="menuitem"
@@ -73,7 +75,7 @@ export function WalletButton({ className, size = "md" }: { className?: string; s
             }}
             className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm text-ink hover:bg-surface-2"
           >
-            <SignOut size={16} /> Disconnect
+            <SignOut size={16} /> {t("wallet.disconnect")}
           </button>
         </div>
       ) : null}

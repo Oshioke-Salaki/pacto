@@ -6,6 +6,8 @@ import { ButtonLink } from "@/components/ui/button";
 import { EmptyState, Skeleton } from "@/components/ui/card";
 import { fetchAllGroupOrders, fetchMintDecimals } from "@/lib/pacto/reads";
 import type { GroupOrderView } from "@/lib/pacto/state";
+import { T } from "@/lib/i18n/provider";
+import type { MessageKey } from "@/lib/i18n/messages";
 
 export const metadata: Metadata = { title: "Explore group orders" };
 
@@ -14,11 +16,11 @@ export default function ExplorePage() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-display text-3xl font-semibold text-ink sm:text-4xl">Open group orders</h1>
-          <p className="mt-2 max-w-lg text-[16px] text-ink-2">Every order below holds buyer money in escrow. Join with USDC, leave before the deadline for a full refund.</p>
+          <h1 className="font-display text-3xl font-semibold text-ink sm:text-4xl"><T k="explore.title" /></h1>
+          <p className="mt-2 max-w-lg text-[16px] text-ink-2"><T k="explore.sub" /></p>
         </div>
         <ButtonLink href="/create" variant="secondary">
-          Start a group order
+          <T k="explore.create" />
         </ButtonLink>
       </div>
       <Suspense fallback={<GridSkeleton />}>
@@ -39,27 +41,27 @@ async function Orders() {
     return (
       <div className="mt-8">
         <EmptyState
-          title="No orders yet"
-          body="Be the first organizer. Create an order, share the link, and watch the vault fill."
-          action={<ButtonLink href="/create">Start a group order</ButtonLink>}
+          title={<T k="explore.emptyTitle" />}
+          body={<T k="explore.emptyBody" />}
+          action={<ButtonLink href="/create"><T k="explore.create" /></ButtonLink>}
         />
       </div>
     );
   }
   return (
     <>
-      <Grid title="Accepting buyers" orders={open} now={now} decimals={decimals} empty="Nothing open right now. Check back soon or start your own." />
-      {rest.length ? <Grid title="Ordering, shipped and finished" orders={rest} now={now} decimals={decimals} /> : null}
+      <Grid title="explore.accepting" orders={open} now={now} decimals={decimals} empty="explore.nothingOpen" />
+      {rest.length ? <Grid title="explore.rest" orders={rest} now={now} decimals={decimals} /> : null}
     </>
   );
 }
 
-function Grid({ title, orders, now, decimals, empty }: { title: string; orders: GroupOrderView[]; now: number; decimals: number; empty?: string }) {
+function Grid({ title, orders, now, decimals, empty }: { title: MessageKey; orders: GroupOrderView[]; now: number; decimals: number; empty?: MessageKey }) {
   return (
     <section className="mt-8">
-      <h2 className="text-sm font-medium text-ink-3">{title}</h2>
+      <h2 className="text-sm font-medium text-ink-3"><T k={title} /></h2>
       {orders.length === 0 ? (
-        <p className="mt-3 text-[15px] text-ink-2">{empty}</p>
+        <p className="mt-3 text-[15px] text-ink-2">{empty ? <T k={empty} /> : null}</p>
       ) : (
         <div className="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {orders.map((o) => (

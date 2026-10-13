@@ -1,4 +1,7 @@
-import { STATUS_LABEL, type GoStatus } from "@/lib/pacto/state";
+"use client";
+
+import type { GoStatus } from "@/lib/pacto/state";
+import { useT } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 
 const tone: Record<GoStatus, string> = {
@@ -11,9 +14,10 @@ const tone: Record<GoStatus, string> = {
 };
 
 export function StatusChip({ status, className }: { status: GoStatus; className?: string }) {
+  const t = useT();
   return (
     <span className={cn("inline-flex h-7 items-center rounded-full px-2.5 text-xs font-medium", tone[status], className)}>
-      {STATUS_LABEL[status]}
+      {t(`status.${status}`)}
     </span>
   );
 }

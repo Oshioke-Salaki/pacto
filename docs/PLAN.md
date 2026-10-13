@@ -35,7 +35,7 @@ Small, visible, low risk.
 - [x] Organizer reputation card: completed orders, disputes, volume settled, with a share image for X (M). Image at `/organizer/[address]/opengraph-image`, share buttons on the organizer page
 - [ ] Portuguese toggle with a strings table (M). Strings live in `app/src/lib/i18n/messages.ts`; use `<T k="..." />` in server components and `useT()` in client ones
   - [x] Infrastructure, EN/PT toggle in nav, browser-language default, landing page, nav, footer
-  - [ ] Wallet button, GO card and status chips, explore page
+  - [x] Wallet button, faucet, GO card, status chips, progress bar, explore page (formatters take a locale tag)
   - [ ] Order page (action panel, timeline, terms, participants)
   - [ ] Create form, dashboard, how-it-works, program error messages
 - [ ] Cover image upload instead of pasted URLs (Vercel Blob) (M)

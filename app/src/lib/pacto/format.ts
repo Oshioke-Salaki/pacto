@@ -29,14 +29,14 @@ export function shortAddress(addr: string, chars = 4) {
   return addr.length <= chars * 2 + 3 ? addr : `${addr.slice(0, chars)}...${addr.slice(-chars)}`;
 }
 
-export function formatDate(unix: number, opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" }) {
+export function formatDate(unix: number, opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" }, tag = "en-US") {
   if (!unix) return "-";
-  return new Date(unix * 1000).toLocaleDateString("en-US", opts);
+  return new Date(unix * 1000).toLocaleDateString(tag, opts);
 }
 
-export function formatDateTime(unix: number) {
+export function formatDateTime(unix: number, tag = "en-US") {
   if (!unix) return "-";
-  return new Date(unix * 1000).toLocaleString("en-US", {
+  return new Date(unix * 1000).toLocaleString(tag, {
     day: "numeric",
     month: "short",
     hour: "2-digit",
@@ -45,7 +45,7 @@ export function formatDateTime(unix: number) {
 }
 
 /** "in 3 days", "2 hours ago", "in 12 minutes". */
-export function relativeTime(unix: number, now = Math.floor(Date.now() / 1000)) {
+export function relativeTime(unix: number, now = Math.floor(Date.now() / 1000), tag = "en") {
   const diff = unix - now;
   const abs = Math.abs(diff);
   const units: [number, Intl.RelativeTimeFormatUnit][] = [
@@ -65,7 +65,7 @@ export function relativeTime(unix: number, now = Math.floor(Date.now() / 1000)) 
       break;
     }
   }
-  return new Intl.RelativeTimeFormat("en", { numeric: "auto" }).format(Math.round(value), unit);
+  return new Intl.RelativeTimeFormat(tag, { numeric: "auto" }).format(Math.round(value), unit);
 }
 
 export function daysFromSecs(secs: number) {

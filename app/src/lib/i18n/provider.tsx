@@ -39,14 +39,25 @@ export function useLocale(): Locale {
   return useSyncExternalStore(subscribe, read, () => "en");
 }
 
+export type Params = Record<string, string | number>;
+
+function interpolate(text: string, params?: Params) {
+  return params ? text.replace(/\{(\w+)\}/g, (m, name: string) => (name in params ? String(params[name]) : m)) : text;
+}
+
 export function useT() {
   const locale = useLocale();
-  return useCallback((key: MessageKey) => MESSAGES[locale][key], [locale]);
+  return useCallback((key: MessageKey, params?: Params) => interpolate(MESSAGES[locale][key], params), [locale]);
 }
 
 /** Renders one translated string. Usable from server components. */
-export function T({ k }: { k: MessageKey }) {
-  return <>{useT()(k)}</>;
+export function T({ k, params }: { k: MessageKey; params?: Params }) {
+  return <>{useT()(k, params)}</>;
+}
+
+/** BCP 47 tag for Intl formatting. */
+export function intlTag(locale: Locale) {
+  return locale === "pt" ? "pt-BR" : "en-US";
 }
 
 export function LocaleSync({ children }: { children: ReactNode }) {

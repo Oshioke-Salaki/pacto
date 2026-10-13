@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { StatusChip } from "@/components/ui/status-chip";
 import { GoProgress } from "@/components/go/progress";
 import { formatUnits, relativeTime, shortAddress } from "@/lib/pacto/format";
 import type { GroupOrderView } from "@/lib/pacto/state";
+import { intlTag, useLocale, useT } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 
 export function GoCard({
@@ -18,11 +21,13 @@ export function GoCard({
   className?: string;
   priority?: boolean;
 }) {
+  const t = useT();
+  const tag = intlTag(useLocale());
   const deadlineText =
     go.status === "open"
       ? now < go.joinDeadline
-        ? `Closes ${relativeTime(go.joinDeadline, now)}`
-        : "Join window closed"
+        ? t("card.closes", { when: relativeTime(go.joinDeadline, now, tag) })
+        : t("card.windowClosed")
       : null;
 
   return (
@@ -53,7 +58,7 @@ export function GoCard({
           <div className="min-w-0">
             <h3 className="font-display truncate text-[17px] font-semibold leading-snug text-ink">{go.title}</h3>
             <p className="mt-1 text-[13px] text-ink-3">
-              by <span className="font-mono">{shortAddress(go.organizer)}</span>
+              {t("card.by")} <span className="font-mono">{shortAddress(go.organizer)}</span>
             </p>
           </div>
           <StatusChip status={go.status} />

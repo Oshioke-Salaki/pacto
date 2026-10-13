@@ -14,8 +14,8 @@ export function EmptyState({
   body,
   action,
 }: {
-  title: string;
-  body: string;
+  title: React.ReactNode;
+  body: React.ReactNode;
   action?: React.ReactNode;
 }) {
   return (

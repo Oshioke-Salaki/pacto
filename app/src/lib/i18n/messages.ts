@@ -80,6 +80,39 @@ export const en = {
   "footer.safety": "Safety rules",
   "footer.legal": "Pacto is non-custodial software. Funds are held by an on-chain program, not by Pacto.",
   "footer.built": "Built on Solana",
+
+  "status.open": "Open",
+  "status.locked": "Ordering",
+  "status.shipped": "Shipped",
+  "status.completed": "Completed",
+  "status.cancelled": "Cancelled",
+  "status.expired": "Expired",
+
+  "card.by": "by",
+  "card.closes": "Closes {when}",
+  "card.windowClosed": "Join window closed",
+  "progress.ofUnits": "of {max} units",
+  "progress.minReached": "Minimum reached",
+  "progress.toMin": "{pct}% to minimum ({min})",
+  "progress.minTitle": "Minimum: {n}",
+
+  "wallet.connect": "Connect wallet",
+  "wallet.copy": "Copy address",
+  "wallet.copied": "Address copied",
+  "wallet.disconnect": "Disconnect",
+  "faucet.button": "Get 100 test USDC",
+  "faucet.sent": "100 test USDC sent",
+  "faucet.view": "View",
+  "faucet.failed": "Faucet failed",
+
+  "explore.title": "Open group orders",
+  "explore.sub": "Every order below holds buyer money in escrow. Join with USDC, leave before the deadline for a full refund.",
+  "explore.create": "Start a group order",
+  "explore.accepting": "Accepting buyers",
+  "explore.nothingOpen": "Nothing open right now. Check back soon or start your own.",
+  "explore.rest": "Ordering, shipped and finished",
+  "explore.emptyTitle": "No orders yet",
+  "explore.emptyBody": "Be the first organizer. Create an order, share the link, and watch the vault fill.",
 } as const;
 
 export type MessageKey = keyof typeof en;
@@ -175,6 +208,40 @@ export const pt: Record<MessageKey, string> = {
   "footer.legal":
     "A Pacto é um software não custodial. Os fundos ficam em um programa na blockchain, não com a Pacto.",
   "footer.built": "Construído na Solana",
+
+  "status.open": "Aberto",
+  "status.locked": "Em compra",
+  "status.shipped": "Enviado",
+  "status.completed": "Concluído",
+  "status.cancelled": "Cancelado",
+  "status.expired": "Expirado",
+
+  "card.by": "por",
+  "card.closes": "Fecha {when}",
+  "card.windowClosed": "Prazo para entrar encerrado",
+  "progress.ofUnits": "de {max} unidades",
+  "progress.minReached": "Mínimo atingido",
+  "progress.toMin": "{pct}% do mínimo ({min})",
+  "progress.minTitle": "Mínimo: {n}",
+
+  "wallet.connect": "Conectar carteira",
+  "wallet.copy": "Copiar endereço",
+  "wallet.copied": "Endereço copiado",
+  "wallet.disconnect": "Desconectar",
+  "faucet.button": "Receber 100 USDC de teste",
+  "faucet.sent": "100 USDC de teste enviados",
+  "faucet.view": "Ver",
+  "faucet.failed": "Falha ao receber USDC de teste",
+
+  "explore.title": "Compras em grupo abertas",
+  "explore.sub":
+    "Todo pedido abaixo mantém o dinheiro dos compradores em custódia. Entre com USDC e saia antes do prazo para receber tudo de volta.",
+  "explore.create": "Criar compra em grupo",
+  "explore.accepting": "Aceitando compradores",
+  "explore.nothingOpen": "Nada aberto agora. Volte logo ou crie o seu.",
+  "explore.rest": "Em compra, enviados e concluídos",
+  "explore.emptyTitle": "Ainda não há pedidos",
+  "explore.emptyBody": "Seja o primeiro organizador. Crie um pedido, compartilhe o link e veja o cofre encher.",
 };
 
 export type Locale = "en" | "pt";
