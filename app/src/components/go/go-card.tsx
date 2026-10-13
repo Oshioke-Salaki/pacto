@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Brl } from "@/components/ui/brl";
 import { StatusChip } from "@/components/ui/status-chip";
 import { GoProgress } from "@/components/go/progress";
 import { formatUnits, relativeTime, shortAddress } from "@/lib/pacto/format";
@@ -67,6 +68,7 @@ export function GoCard({
         <div className="mt-auto flex items-baseline justify-between border-t border-line pt-4">
           <span className="tnum font-display text-xl font-semibold text-ink">
             {formatUnits(go.unitPrice, decimals)} <span className="text-sm font-medium text-ink-3">USDC</span>
+            <Brl amount={go.unitPrice} decimals={decimals} className="ml-2 text-xs font-normal text-ink-3" />
           </span>
           <span className="text-[13px] text-ink-2">{deadlineText ?? ""}</span>
         </div>

@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { Brl } from "@/components/ui/brl";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -93,6 +94,7 @@ async function Content({ params }: Params) {
             <div className="flex flex-wrap items-baseline justify-between gap-3">
               <p className="tnum font-display text-3xl font-semibold text-ink">
                 {formatUnits(go.unitPrice, decimals)} <span className="text-base font-medium text-ink-3"><T k="go.perUnit" /></span>
+                <Brl amount={go.unitPrice} decimals={decimals} className="ml-3 text-sm font-normal text-ink-3" />
               </p>
               <OrderTiming go={go} now={now} />
             </div>
@@ -100,7 +102,7 @@ async function Content({ params }: Params) {
               <GoProgress go={go} />
             </div>
             <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-line pt-5 sm:grid-cols-4">
-              <Mini label="go.inEscrow" value={`${formatUnits(go.totalPaid, decimals)} USDC`} />
+              <Mini label="go.inEscrow" value={`${formatUnits(go.totalPaid, decimals)} USDC`} extra={<Brl amount={go.totalPaid} decimals={decimals} className="block text-xs font-normal text-ink-3" />} />
               <Mini label="go.buyers" value={String(go.participants)} />
               <Mini label="go.advance" value={`${go.advanceBps / 100}%`} />
               <Mini label="go.arbiter" value={shortAddress(go.arbiter)} mono />
@@ -157,11 +159,11 @@ async function Content({ params }: Params) {
   );
 }
 
-function Mini({ label, value, mono }: { label: MessageKey; value: string; mono?: boolean }) {
+function Mini({ label, value, mono, extra }: { label: MessageKey; value: string; mono?: boolean; extra?: React.ReactNode }) {
   return (
     <div>
       <dt className="text-xs text-ink-3"><T k={label} /></dt>
-      <dd className={mono ? "font-mono text-[15px] text-ink" : "tnum text-[15px] font-medium text-ink"}>{value}</dd>
+      <dd className={mono ? "font-mono text-[15px] text-ink" : "tnum text-[15px] font-medium text-ink"}>{value}{extra}</dd>
     </div>
   );
 }

@@ -52,7 +52,7 @@ The target users pay with Pix and do not own USDC or a wallet. Until this is sol
 - [ ] Sign in with email or passkey via an embedded wallet provider (L)
 - [ ] Pix on-ramp: buyer pays in BRL, receives USDC in the embedded wallet (XL). Partner candidates in [BUSINESS.md](BUSINESS.md)
 - [ ] Gas sponsorship so buyers never need SOL (M)
-- [ ] Show every amount in BRL alongside USDC (S)
+- [x] Show amounts in BRL alongside USDC (S). `/api/rate` (cached 1h, fixed fallback), `<Brl />` on cards, order page, join panel, create summary
 - [ ] If the on-ramp cannot ship in time, build a clearly labeled mock of the flow for the demo (M)
 
 ## Phase 3: Keep people informed

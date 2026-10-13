@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Brl } from "@/components/ui/brl";
 import { useRouter } from "next/navigation";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
@@ -390,6 +391,7 @@ function JoinCard({
         <div className="pb-7 text-right">
           <p className="text-xs text-ink-3">{t("ap.total")}</p>
           <p className="tnum font-display text-2xl font-semibold text-ink">{formatUnits(total, decimals)}</p>
+          <Brl amount={total} decimals={decimals} className="text-xs text-ink-3" />
         </div>
       </div>
       <p className="mt-3 text-[13px] leading-relaxed text-ink-2">
@@ -398,7 +400,8 @@ function JoinCard({
       {connected && balance ? (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-surface-2 px-3 py-2 text-[13px]">
           <span className="text-ink-2">
-            {t("ap.balance")} <span className="tnum font-medium text-ink">{formatUnits(balance.amount, decimals)} USDC</span>
+            {t("ap.balance")} <span className="tnum font-medium text-ink">{formatUnits(balance.amount, decimals)} USDC</span>{" "}
+            <Brl amount={balance.amount} decimals={decimals} className="text-xs text-ink-3" />
           </span>
           {IS_DEVNET && (insufficient || !balance.exists) ? <FaucetButton onDone={onRefreshBalance} /> : null}
         </div>

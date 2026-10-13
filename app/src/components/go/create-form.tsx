@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Brl } from "@/components/ui/brl";
 import { useRouter } from "next/navigation";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
@@ -259,9 +260,9 @@ export function CreateForm() {
         <Card className="p-6">
           <h2 className="font-display text-lg font-semibold text-ink">{t("cf.summary")}</h2>
           <dl className="mt-4 flex flex-col gap-3 text-[14px]">
-            <Row k={t("cf.perUnit")} v={preview ? `${formatUnits(preview.unit)} USDC` : "-"} />
-            <Row k={t("cf.pool")} v={preview ? `${formatUnits(preview.atMin)} USDC` : "-"} />
-            <Row k={t("cf.yourAdvance")} v={preview ? `${formatUnits(preview.advance)} USDC` : "-"} />
+            <Row k={t("cf.perUnit")} v={preview ? `${formatUnits(preview.unit)} USDC` : "-"} brl={preview?.unit} />
+            <Row k={t("cf.pool")} v={preview ? `${formatUnits(preview.atMin)} USDC` : "-"} brl={preview?.atMin} />
+            <Row k={t("cf.yourAdvance")} v={preview ? `${formatUnits(preview.advance)} USDC` : "-"} brl={preview?.advance} />
             <Row k={t("cf.fee")} v={t("cf.feeValue", { pct: feePct })} />
             <Row k={t("cf.currency")} v={t("cf.currencyValue")} />
           </dl>
@@ -278,11 +279,14 @@ export function CreateForm() {
   );
 }
 
-function Row({ k, v }: { k: string; v: string }) {
+function Row({ k, v, brl }: { k: string; v: string; brl?: bigint }) {
   return (
     <div className="flex items-baseline justify-between gap-3 border-b border-line pb-3 last:border-0 last:pb-0">
       <dt className="text-ink-2">{k}</dt>
-      <dd className="tnum font-medium text-ink">{v}</dd>
+      <dd className="tnum text-right font-medium text-ink">
+        {v}
+        {brl !== undefined ? <Brl amount={brl} className="block text-xs font-normal text-ink-3" /> : null}
+      </dd>
     </div>
   );
 }
