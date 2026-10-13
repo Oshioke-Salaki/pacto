@@ -4,13 +4,13 @@ import { Copy, XLogo } from "@phosphor-icons/react";
 import { toast } from "sonner";
 import { Button, ButtonLink } from "@/components/ui/button";
 import { SITE_URL } from "@/lib/solana/cluster";
+import { useT } from "@/lib/i18n/provider";
 
 export function ShareOrganizer({ address, completed }: { address: string; completed: number }) {
+  const t = useT();
   const pageUrl = `${SITE_URL}/organizer/${address}`;
   const text =
-    completed > 0
-      ? `${completed} group order${completed === 1 ? "" : "s"} delivered, verified on Solana with Pacto.`
-      : "My organizer record on Pacto. Buyers' money stays in escrow until it arrives.";
+    completed === 0 ? t("orgShare.tweetNew") : completed === 1 ? t("orgShare.tweetDoneOne") : t("orgShare.tweetDone", { n: completed });
   const tweet = `https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(pageUrl)}`;
 
   return (
@@ -20,13 +20,13 @@ export function ShareOrganizer({ address, completed }: { address: string; comple
         size="sm"
         onClick={async () => {
           await navigator.clipboard.writeText(pageUrl);
-          toast.success("Link copied");
+          toast.success(t("share.linkCopied"));
         }}
       >
-        <Copy size={16} /> Copy reputation link
+        <Copy size={16} /> {t("orgShare.copy")}
       </Button>
       <ButtonLink href={tweet} variant="ghost" size="sm" external>
-        <XLogo size={16} /> Share
+        <XLogo size={16} /> {t("share.share")}
       </ButtonLink>
     </div>
   );

@@ -36,8 +36,9 @@ Small, visible, low risk.
 - [ ] Portuguese toggle with a strings table (M). Strings live in `app/src/lib/i18n/messages.ts`; use `<T k="..." />` in server components and `useT()` in client ones
   - [x] Infrastructure, EN/PT toggle in nav, browser-language default, landing page, nav, footer
   - [x] Wallet button, faucet, GO card, status chips, progress bar, explore page (formatters take a locale tag)
-  - [ ] Order page (action panel, timeline, terms, participants)
-  - [ ] Create form, dashboard, how-it-works, program error messages
+  - [x] Order page: action panel, timeline, terms, participants, share rows, organizer card
+  - [x] Program error messages (`explainError` uses `tNow`)
+  - [ ] Create form, dashboard, how-it-works
 - [ ] Cover image upload instead of pasted URLs (Vercel Blob) (M)
 - [ ] Empty states and first-run guidance on dashboard and explore (S)
 - [ ] Register the Blink domain with Dialect so links unfurl on X (S)

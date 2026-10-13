@@ -50,9 +50,28 @@ export function useT() {
   return useCallback((key: MessageKey, params?: Params) => interpolate(MESSAGES[locale][key], params), [locale]);
 }
 
+/** Counted label, e.g. count("unit", 2) gives "2 units". */
+export function useCount() {
+  const t = useT();
+  return useCallback((base: "unit" | "day", n: number) => {
+    const p = plural(base, n);
+    return t(p.key, p.params);
+  }, [t]);
+}
+
 /** Renders one translated string. Usable from server components. */
 export function T({ k, params }: { k: MessageKey; params?: Params }) {
   return <>{useT()(k, params)}</>;
+}
+
+/** Translate outside React (toasts, error helpers). Client only. */
+export function tNow(key: MessageKey, params?: Params): string {
+  return interpolate(MESSAGES[read()][key], params);
+}
+
+/** Picks the "one" or "other" variant of a counted message, e.g. plural("unit", 2). */
+export function plural(base: "unit" | "day", n: number): { key: MessageKey; params: Params } {
+  return { key: `${base}.${n === 1 ? "one" : "other"}`, params: { n } };
 }
 
 /** BCP 47 tag for Intl formatting. */

@@ -1,9 +1,15 @@
+"use client";
+
 import { formatUnits, relativeTime, shortAddress } from "@/lib/pacto/format";
 import type { ParticipationView } from "@/lib/pacto/state";
+import { intlTag, useCount, useLocale, useT } from "@/lib/i18n/provider";
 
 export function Participants({ list, now, decimals = 6 }: { list: ParticipationView[]; now: number; decimals?: number }) {
+  const t = useT();
+  const count = useCount();
+  const tag = intlTag(useLocale());
   if (list.length === 0) {
-    return <p className="text-[15px] text-ink-2">No buyers yet. Share the link to get the first one.</p>;
+    return <p className="text-[15px] text-ink-2">{t("part.none")}</p>;
   }
   return (
     <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -12,12 +18,12 @@ export function Participants({ list, now, decimals = 6 }: { list: ParticipationV
           <div className="min-w-0">
             <p className="font-mono text-[13px] text-ink">{shortAddress(p.buyer, 5)}</p>
             <p className="text-xs text-ink-3">
-              joined {relativeTime(p.joinedAt, now)}
-              {p.disputed ? " · in dispute" : ""}
+              {t("part.joined", { when: relativeTime(p.joinedAt, now, tag) })}
+              {p.disputed ? ` · ${t("part.inDispute")}` : ""}
             </p>
           </div>
           <div className="text-right">
-            <p className="tnum text-[13px] font-medium text-ink">{p.qty} unit{p.qty === 1 ? "" : "s"}</p>
+            <p className="tnum text-[13px] font-medium text-ink">{count("unit", p.qty)}</p>
             <p className="tnum text-xs text-ink-3">{formatUnits(p.paid, decimals)} USDC</p>
           </div>
         </li>

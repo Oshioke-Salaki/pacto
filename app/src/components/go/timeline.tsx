@@ -1,6 +1,9 @@
-import { Check } from "@phosphor-icons/react/dist/ssr";
+"use client";
+
+import { Check } from "@phosphor-icons/react";
 import { formatDate } from "@/lib/pacto/format";
 import { deliverBy, shipBy, type GroupOrderView } from "@/lib/pacto/state";
+import { intlTag, useLocale, useT } from "@/lib/i18n/provider";
 import { cn } from "@/lib/utils";
 
 interface Step {
@@ -10,55 +13,57 @@ interface Step {
   state: "done" | "current" | "todo" | "failed";
 }
 
-export function buildSteps(go: GroupOrderView): Step[] {
+export function buildSteps(go: GroupOrderView, t: ReturnType<typeof useT>, tag: string): Step[] {
   const s = go.status;
   const openDone = s !== "open";
   const lockedDone = s === "shipped" || s === "completed";
   const shippedDone = s === "completed";
+  const d = (unix: number) => formatDate(unix, undefined, tag);
 
   if (s === "cancelled") {
     return [
-      { key: "open", label: "Open for joins", detail: `Created ${formatDate(go.createdAt)}`, state: "done" },
-      { key: "cancel", label: "Cancelled", detail: "Buyers claim full refunds", state: "failed" },
+      { key: "open", label: t("tl.open"), detail: t("tl.created", { date: d(go.createdAt) }), state: "done" },
+      { key: "cancel", label: t("tl.cancelled"), detail: t("tl.cancelledDetail"), state: "failed" },
     ];
   }
   if (s === "expired") {
     return [
-      { key: "open", label: "Open for joins", detail: `Created ${formatDate(go.createdAt)}`, state: "done" },
-      { key: "locked", label: "Locked, advance paid", detail: formatDate(go.lockedAt), state: "done" },
-      { key: "expired", label: "Never shipped", detail: `Ship-by was ${formatDate(shipBy(go))}`, state: "failed" },
+      { key: "open", label: t("tl.open"), detail: t("tl.created", { date: d(go.createdAt) }), state: "done" },
+      { key: "locked", label: t("tl.locked"), detail: d(go.lockedAt), state: "done" },
+      { key: "expired", label: t("tl.neverShipped"), detail: t("tl.shipByWas", { date: d(shipBy(go)) }), state: "failed" },
     ];
   }
   return [
     {
       key: "open",
-      label: "Open for joins",
-      detail: openDone ? `Closed ${formatDate(go.lockedAt || go.joinDeadline)}` : `Until ${formatDate(go.joinDeadline)}`,
+      label: t("tl.open"),
+      detail: openDone ? t("tl.closed", { date: d(go.lockedAt || go.joinDeadline) }) : t("tl.until", { date: d(go.joinDeadline) }),
       state: openDone ? "done" : "current",
     },
     {
       key: "locked",
-      label: "Locked, advance paid",
-      detail: lockedDone || s === "locked" ? `${formatDate(go.lockedAt)}, ship by ${formatDate(shipBy(go))}` : "When minimum is met",
+      label: t("tl.locked"),
+      detail: lockedDone || s === "locked" ? t("tl.lockedDetail", { date: d(go.lockedAt), ship: d(shipBy(go)) }) : t("tl.whenMin"),
       state: lockedDone ? "done" : s === "locked" ? "current" : "todo",
     },
     {
       key: "shipped",
-      label: "Shipped",
-      detail: shippedDone || s === "shipped" ? `${formatDate(go.shippedAt)}, confirm by ${formatDate(deliverBy(go))}` : "Organizer adds tracking",
+      label: t("tl.shipped"),
+      detail: shippedDone || s === "shipped" ? t("tl.shippedDetail", { date: d(go.shippedAt), deliver: d(deliverBy(go)) }) : t("tl.addsTracking"),
       state: shippedDone ? "done" : s === "shipped" ? "current" : "todo",
     },
     {
       key: "completed",
-      label: "Completed",
-      detail: shippedDone ? "Every buyer settled" : "Buyers confirm receipt",
+      label: t("tl.completed"),
+      detail: shippedDone ? t("tl.everyoneSettled") : t("tl.buyersConfirm"),
       state: shippedDone ? "done" : "todo",
     },
   ];
 }
 
 export function GoTimeline({ go }: { go: GroupOrderView }) {
-  const steps = buildSteps(go);
+  const t = useT();
+  const steps = buildSteps(go, t, intlTag(useLocale()));
   return (
     <ol className="flex flex-col">
       {steps.map((st, i) => (

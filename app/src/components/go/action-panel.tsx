@@ -30,6 +30,7 @@ import {
   type ParticipationView,
 } from "@/lib/pacto/state";
 import { explorerUrl, IS_DEVNET } from "@/lib/solana/cluster";
+import { useCount, useT } from "@/lib/i18n/provider";
 
 interface GoResponse {
   go: GroupOrderView;
@@ -48,12 +49,14 @@ export function ActionPanel({ address, initial, decimals: initialDecimals }: { a
   const qc = useQueryClient();
   const now = useNow();
   const viewer = wallet.publicKey?.toBase58() ?? null;
+  const t = useT();
+  const count = useCount();
 
   const query = useQuery<GoResponse>({
     queryKey: ["go", address, viewer],
     queryFn: async () => {
       const res = await fetch(`/api/go/${address}${viewer ? `?viewer=${viewer}` : ""}`, { cache: "no-store" });
-      if (!res.ok) throw new Error("Failed to load order");
+      if (!res.ok) throw new Error(t("ap.loadFail"));
       return res.json();
     },
     refetchInterval: 20_000,
@@ -143,7 +146,7 @@ export function ActionPanel({ address, initial, decimals: initialDecimals }: { a
           busy={busy === "join"}
           onConnect={() => setVisible(true)}
           onRefreshBalance={() => qc.invalidateQueries({ queryKey: ["usdc-balance"] })}
-          onJoin={(qty) => run("join", (c) => c.join(goRef, wallet.publicKey!, qty), `Joined with ${qty} unit${qty === 1 ? "" : "s"}`)}
+          onJoin={(qty) => run("join", (c) => c.join(goRef, wallet.publicKey!, qty), t("ap.joinedUnits", { units: count("unit", qty) }))}
         />
       ) : null}
 
@@ -151,19 +154,19 @@ export function ActionPanel({ address, initial, decimals: initialDecimals }: { a
       {participation ? (
         <Card className="p-5">
           <div className="flex items-center gap-2 text-sm font-medium text-ink">
-            <ShieldCheck size={18} weight="fill" className="text-accent" /> Your position
+            <ShieldCheck size={18} weight="fill" className="text-accent" /> {t("ap.yourPosition")}
           </div>
           <dl className="mt-3 grid grid-cols-3 gap-3">
             <div>
-              <dt className="text-xs text-ink-3">Units</dt>
+              <dt className="text-xs text-ink-3">{t("ap.units")}</dt>
               <dd className="tnum font-display text-lg font-semibold">{participation.qty}</dd>
             </div>
             <div>
-              <dt className="text-xs text-ink-3">Paid</dt>
+              <dt className="text-xs text-ink-3">{t("ap.paid")}</dt>
               <dd className="tnum font-display text-lg font-semibold">{formatUnits(participation.paid, decimals)}</dd>
             </div>
             <div>
-              <dt className="text-xs text-ink-3">{go.status === "open" ? "Refundable" : "Held for you"}</dt>
+              <dt className="text-xs text-ink-3">{go.status === "open" ? t("ap.refundable") : t("ap.heldForYou")}</dt>
               <dd className="tnum font-display text-lg font-semibold">
                 {go.status === "open" || go.status === "cancelled"
                   ? formatUnits(participation.paid, decimals)
@@ -173,37 +176,37 @@ export function ActionPanel({ address, initial, decimals: initialDecimals }: { a
           </dl>
           {participation.disputed ? (
             <p className="mt-3 rounded-lg bg-warn-soft px-3 py-2 text-[13px] text-warn">
-              In dispute. The arbiter ({shortAddress(go.arbiter)}) will refund you or release to the organizer.
+              {t("ap.inDispute", { arbiter: shortAddress(go.arbiter) })}
             </p>
           ) : null}
           <div className="mt-4 flex flex-wrap gap-2">
             {has("confirm_receipt") ? (
               <Button
                 loading={busy === "confirm_receipt"}
-                onClick={() => run("confirm_receipt", (c) => c.confirmReceipt(goRef, wallet.publicKey!, treasury!), "Receipt confirmed. Thanks for closing the loop.")}
+                onClick={() => run("confirm_receipt", (c) => c.confirmReceipt(goRef, wallet.publicKey!, treasury!), t("ap.receiptDone"))}
                 disabled={!treasury}
               >
-                Confirm I received it
+                {t("ap.confirmReceipt")}
               </Button>
             ) : null}
             {has("open_dispute") ? (
               <ConfirmButton
                 variant="danger"
-                label="Open a dispute"
-                confirmLabel="Yes, open dispute"
+                label={t("ap.openDispute")}
+                confirmLabel={t("ap.openDisputeYes")}
                 busy={busy === "open_dispute"}
-                description="Only do this if the item did not arrive or is not what was promised. The arbiter decides who gets the held share."
-                onConfirm={() => run("open_dispute", (c) => c.openDispute(goRef, wallet.publicKey!), "Dispute opened")}
+                description={t("ap.openDisputeDesc")}
+                onConfirm={() => run("open_dispute", (c) => c.openDispute(goRef, wallet.publicKey!), t("ap.disputeOpened"))}
               />
             ) : null}
             {has("leave") ? (
-              <Button variant="secondary" loading={busy === "leave"} onClick={() => run("leave", (c) => c.leave(goRef, wallet.publicKey!), "Left the order. Full refund sent.")}>
-                Leave and refund
+              <Button variant="secondary" loading={busy === "leave"} onClick={() => run("leave", (c) => c.leave(goRef, wallet.publicKey!), t("ap.leftDone"))}>
+                {t("ap.leave")}
               </Button>
             ) : null}
             {has("claim_refund") ? (
-              <Button loading={busy === "claim_refund"} onClick={() => run("claim_refund", (c) => c.claimRefund(goRef, wallet.publicKey!), "Refund sent to your wallet")}>
-                {go.status === "cancelled" ? "Claim full refund" : "Reclaim my remainder"}
+              <Button loading={busy === "claim_refund"} onClick={() => run("claim_refund", (c) => c.claimRefund(goRef, wallet.publicKey!), t("ap.refundSent"))}>
+                {go.status === "cancelled" ? t("ap.claimFull") : t("ap.reclaim")}
               </Button>
             ) : null}
           </div>
@@ -213,47 +216,47 @@ export function ActionPanel({ address, initial, decimals: initialDecimals }: { a
       {/* Organizer controls */}
       {r.isOrganizer ? (
         <Card className="p-5">
-          <p className="text-sm font-medium text-ink">You organize this order</p>
+          <p className="text-sm font-medium text-ink">{t("ap.youOrganize")}</p>
           <p className="mt-1 text-[13px] text-ink-2">
             {go.status === "open"
               ? go.totalQty >= go.minQty
-                ? "Minimum reached. Lock to receive your advance and start ordering."
-                : `Need ${go.minQty - go.totalQty} more unit${go.minQty - go.totalQty === 1 ? "" : "s"} before you can lock.`
+                ? t("ap.org.minReached")
+                : t("ap.org.needMore", { units: count("unit", go.minQty - go.totalQty) })
               : go.status === "locked"
-                ? "Place the bulk order, then mark it shipped with a tracking reference."
+                ? t("ap.org.locked")
                 : go.status === "shipped"
-                  ? `${go.settled} of ${go.participants} buyers settled.`
-                  : "This order is finished."}
+                  ? t("ap.org.shipped", { settled: go.settled, total: go.participants })
+                  : t("ap.org.finished")}
           </p>
           <div className="mt-4 flex flex-col gap-3">
             {has("lock") ? (
               <ConfirmButton
-                label="Lock and receive advance"
-                confirmLabel={`Lock and receive ${formatUnits(
+                label={t("ap.lock")}
+                confirmLabel={t("ap.lockYes", { amount: formatUnits(
                   (BigInt(go.totalPaid) * BigInt(go.advanceBps)) / 10_000n -
                     ((BigInt(go.totalPaid) * BigInt(go.advanceBps)) / 10_000n) * BigInt(go.feeBps) / 10_000n,
                   decimals,
-                )} USDC`}
+                ) })}
                 busy={busy === "lock"}
-                description="Closes joins. Buyers can no longer leave. You commit to shipping within the ship-by window."
-                onConfirm={() => run("lock", (c) => c.lock(goRef, treasury!), "Locked. Advance sent to your wallet.")}
+                description={t("ap.lockDesc")}
+                onConfirm={() => run("lock", (c) => c.lock(goRef, treasury!), t("ap.lockedDone"))}
                 disabled={!treasury}
               />
             ) : null}
-            {has("mark_shipped") ? <ShipForm busy={busy === "mark_shipped"} onSubmit={(ref) => run("mark_shipped", (c) => c.markShipped(goRef, ref), "Marked as shipped")} /> : null}
+            {has("mark_shipped") ? <ShipForm busy={busy === "mark_shipped"} onSubmit={(ref) => run("mark_shipped", (c) => c.markShipped(goRef, ref), t("ap.shipped"))} /> : null}
             {has("cancel") ? (
               <ConfirmButton
                 variant="danger"
-                label="Cancel order"
-                confirmLabel="Yes, cancel and refund everyone"
+                label={t("ap.cancel")}
+                confirmLabel={t("ap.cancelYes")}
                 busy={busy === "cancel"}
-                description="Every buyer gets a full refund. This cannot be undone."
-                onConfirm={() => run("cancel", (c) => c.cancel(goRef, wallet.publicKey!), "Order cancelled")}
+                description={t("ap.cancelDesc")}
+                onConfirm={() => run("cancel", (c) => c.cancel(goRef, wallet.publicKey!), t("ap.cancelled"))}
               />
             ) : null}
             {has("close_vault") ? (
-              <Button variant="secondary" loading={busy === "close_vault"} onClick={() => run("close_vault", (c) => c.closeVault(goRef), "Vault closed")}>
-                Close vault and recover rent
+              <Button variant="secondary" loading={busy === "close_vault"} onClick={() => run("close_vault", (c) => c.closeVault(goRef), t("ap.vaultClosed"))}>
+                {t("ap.closeVault")}
               </Button>
             ) : null}
           </div>
@@ -263,10 +266,10 @@ export function ActionPanel({ address, initial, decimals: initialDecimals }: { a
       {/* Public safety valves */}
       {!r.isOrganizer && has("cancel") ? (
         <Card className="p-5">
-          <p className="text-sm font-medium text-ink">This order can be cancelled</p>
-          <p className="mt-1 text-[13px] text-ink-2">{actions.find((a) => a.id === "cancel")?.hint} Anyone can trigger it so buyers get refunds.</p>
-          <Button className="mt-4" variant="secondary" loading={busy === "cancel"} onClick={() => run("cancel", (c) => c.cancel(goRef, wallet.publicKey!), "Order cancelled. Buyers can claim refunds.")}>
-            Cancel and unlock refunds
+          <p className="text-sm font-medium text-ink">{t("ap.canCancel")}</p>
+          <p className="mt-1 text-[13px] text-ink-2">{go.totalQty < go.minQty ? t("ap.canCancelHintMin") : t("ap.canCancelHintLate")} {t("ap.canCancelTail")}</p>
+          <Button className="mt-4" variant="secondary" loading={busy === "cancel"} onClick={() => run("cancel", (c) => c.cancel(goRef, wallet.publicKey!), t("ap.cancelledBuyers"))}>
+            {t("ap.cancelUnlock")}
           </Button>
         </Card>
       ) : null}
@@ -274,7 +277,7 @@ export function ActionPanel({ address, initial, decimals: initialDecimals }: { a
       {/* Arbiter */}
       {r.isArbiter && go.status === "shipped" ? (
         <Card className="p-5">
-          <p className="text-sm font-medium text-ink">You are the arbiter</p>
+          <p className="text-sm font-medium text-ink">{t("ap.youArbiter")}</p>
           <DisputeList
             list={participations.filter((p) => p.disputed)}
             decimals={decimals}
@@ -284,7 +287,7 @@ export function ActionPanel({ address, initial, decimals: initialDecimals }: { a
               run(
                 "resolve_dispute",
                 (c) => c.resolveDispute(goRef, new PublicKey(buyer), refund, treasury!),
-                refund ? "Refunded the buyer" : "Released to the organizer",
+                refund ? t("ap.refunded") : t("ap.releasedOrg"),
               )
             }
           />
@@ -294,11 +297,11 @@ export function ActionPanel({ address, initial, decimals: initialDecimals }: { a
       {/* Release expired (anyone) */}
       {has("release_expired") ? (
         <Card className="p-5">
-          <p className="text-sm font-medium text-ink">Delivery window closed</p>
-          <p className="mt-1 text-[13px] text-ink-2">Undisputed shares that were never confirmed can be released to the organizer by anyone.</p>
+          <p className="text-sm font-medium text-ink">{t("ap.windowClosed")}</p>
+          <p className="mt-1 text-[13px] text-ink-2">{t("ap.windowClosedDesc")}</p>
           <ul className="mt-3 flex flex-col gap-2">
             {participations.filter((p) => !p.disputed).length === 0 ? (
-              <li className="text-[13px] text-ink-3">Nothing left to release.</li>
+              <li className="text-[13px] text-ink-3">{t("ap.nothingRelease")}</li>
             ) : (
               participations
                 .filter((p) => !p.disputed)
@@ -310,9 +313,9 @@ export function ActionPanel({ address, initial, decimals: initialDecimals }: { a
                       variant="secondary"
                       loading={busy === "release_expired"}
                       disabled={!treasury}
-                      onClick={() => run("release_expired", (c) => c.releaseExpired(goRef, new PublicKey(p.buyer), wallet.publicKey!, treasury!), "Share released")}
+                      onClick={() => run("release_expired", (c) => c.releaseExpired(goRef, new PublicKey(p.buyer), wallet.publicKey!, treasury!), t("ap.shareReleased"))}
                     >
-                      Release {formatUnits(remainderOf(BigInt(p.paid), go.advanceBps), decimals)}
+                      {t("ap.release", { amount: formatUnits(remainderOf(BigInt(p.paid), go.advanceBps), decimals) })}
                     </Button>
                   </li>
                 ))
@@ -355,6 +358,7 @@ function JoinCard({
   onJoin: (qty: number) => void;
   onRefreshBalance: () => void;
 }) {
+  const t = useT();
   const remaining = go.maxQty - go.totalQty;
   const [qty, setQty] = useState(1);
   const unit = BigInt(go.unitPrice);
@@ -366,13 +370,13 @@ function JoinCard({
   return (
     <Card className="p-5">
       <div className="flex items-baseline justify-between">
-        <p className="font-display text-lg font-semibold text-ink">{participation ? "Add more units" : "Join this order"}</p>
+        <p className="font-display text-lg font-semibold text-ink">{participation ? t("ap.addMore") : t("ap.join")}</p>
         <p className="tnum text-sm text-ink-2">
-          <span className="font-medium text-ink">{formatUnits(unit, decimals)}</span> USDC each
+          <span className="font-medium text-ink">{formatUnits(unit, decimals)}</span> {t("ap.each")}
         </p>
       </div>
       <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-3">
-        <Field label="Units" htmlFor="qty" hint={`${remaining} left`} error={!valid ? `Choose between 1 and ${remaining}` : undefined}>
+        <Field label={t("ap.unitsLabel")} htmlFor="qty" hint={t("ap.left", { n: remaining })} error={!valid ? t("ap.range", { n: remaining }) : undefined}>
           <Input
             id="qty"
             type="number"
@@ -384,18 +388,17 @@ function JoinCard({
           />
         </Field>
         <div className="pb-7 text-right">
-          <p className="text-xs text-ink-3">Total</p>
+          <p className="text-xs text-ink-3">{t("ap.total")}</p>
           <p className="tnum font-display text-2xl font-semibold text-ink">{formatUnits(total, decimals)}</p>
         </div>
       </div>
       <p className="mt-3 text-[13px] leading-relaxed text-ink-2">
-        Your money goes to the escrow vault, not the organizer. Up to{" "}
-        <span className="font-medium text-ink">{formatUnits(exposure, decimals)} USDC</span> ({go.advanceBps / 100}%) is advanced to the organizer when the order locks. The rest is released only when you confirm delivery.
+        {t("ap.escrowNote", { amount: formatUnits(exposure, decimals), pct: go.advanceBps / 100 })}
       </p>
       {connected && balance ? (
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-surface-2 px-3 py-2 text-[13px]">
           <span className="text-ink-2">
-            Wallet balance: <span className="tnum font-medium text-ink">{formatUnits(balance.amount, decimals)} USDC</span>
+            {t("ap.balance")} <span className="tnum font-medium text-ink">{formatUnits(balance.amount, decimals)} USDC</span>
           </span>
           {IS_DEVNET && (insufficient || !balance.exists) ? <FaucetButton onDone={onRefreshBalance} /> : null}
         </div>
@@ -403,17 +406,17 @@ function JoinCard({
       <div className="mt-4">
         {connected ? (
           <Button className="w-full" size="lg" loading={busy} disabled={!valid || insufficient} onClick={() => onJoin(qty)}>
-            {insufficient ? "Not enough USDC" : `Pay ${formatUnits(total, decimals)} USDC into escrow`}
+            {insufficient ? t("ap.notEnough") : t("ap.pay", { amount: formatUnits(total, decimals) })}
           </Button>
         ) : (
           <Button className="w-full" size="lg" onClick={onConnect}>
-            Connect wallet to join
+            {t("ap.connectJoin")}
           </Button>
         )}
       </div>
       <details className="group mt-4 border-t border-line pt-4">
         <summary className="cursor-pointer list-none text-sm font-medium text-ink-2 hover:text-ink">
-          Buyer protection terms
+          {t("ap.terms")}
         </summary>
         <div className="mt-4">
           <GoTerms go={go} decimals={decimals} qty={Math.max(1, qty)} />
@@ -424,6 +427,7 @@ function JoinCard({
 }
 
 function ShipForm({ busy, onSubmit }: { busy: boolean; onSubmit: (ref: string) => void }) {
+  const t = useT();
   const [ref, setRef] = useState("");
   const valid = ref.trim().length > 0 && ref.length <= 96;
   return (
@@ -434,11 +438,11 @@ function ShipForm({ busy, onSubmit }: { busy: boolean; onSubmit: (ref: string) =
         if (valid) onSubmit(ref.trim());
       }}
     >
-      <Field label="Tracking code or proof link" htmlFor="ship-ref" hint="Buyers see this. Max 96 characters.">
+      <Field label={t("ap.trackingLabel")} htmlFor="ship-ref" hint={t("ap.trackingHint")}>
         <Input id="ship-ref" value={ref} onChange={(e) => setRef(e.target.value)} placeholder="BR123456789 or https://..." maxLength={96} />
       </Field>
       <Button type="submit" loading={busy} disabled={!valid}>
-        Mark as shipped
+        {t("ap.markShipped")}
       </Button>
     </form>
   );
@@ -461,6 +465,7 @@ function ConfirmButton({
   variant?: "primary" | "danger" | "secondary";
   disabled?: boolean;
 }) {
+  const t = useT();
   const [arm, setArm] = useState(false);
   if (!arm) {
     return (
@@ -477,7 +482,7 @@ function ConfirmButton({
           {confirmLabel}
         </Button>
         <Button variant="ghost" onClick={() => setArm(false)} disabled={busy}>
-          Not now
+          {t("ap.notNow")}
         </Button>
       </div>
     </div>
@@ -497,27 +502,28 @@ function DisputeList({
   busy: boolean;
   onResolve: (buyer: string, refund: boolean) => void;
 }) {
-  if (list.length === 0) return <p className="mt-1 text-[13px] text-ink-2">No open disputes.</p>;
+  const t = useT();
+  if (list.length === 0) return <p className="mt-1 text-[13px] text-ink-2">{t("ap.noDisputes")}</p>;
   return (
     <ul className="mt-3 flex flex-col gap-3">
       {list.map((p) => (
         <li key={p.address} className="rounded-xl border border-line p-4">
           <div className="flex items-center justify-between">
             <span className="font-mono text-[13px] text-ink">{shortAddress(p.buyer, 5)}</span>
-            <span className="tnum text-[13px] text-ink-2">{formatUnits(remainderOf(BigInt(p.paid), go.advanceBps), decimals)} USDC at stake</span>
+            <span className="tnum text-[13px] text-ink-2">{t("ap.atStake", { amount: formatUnits(remainderOf(BigInt(p.paid), go.advanceBps), decimals) })}</span>
           </div>
           <p className="mt-2 text-[13px] text-ink-2">
-            Ask both sides for evidence off-chain. Tracking: {go.shipmentRef || "none"}.{" "}
+            {t("ap.evidence", { tracking: go.shipmentRef || t("ap.none") })}{" "}
             <a href={go.detailsUri} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-ink underline">
-              Order post <ArrowSquareOut size={12} />
+              {t("ap.orderPost")} <ArrowSquareOut size={12} />
             </a>
           </p>
           <div className="mt-3 flex gap-2">
             <Button size="sm" variant="danger" loading={busy} onClick={() => onResolve(p.buyer, true)}>
-              Refund buyer
+              {t("ap.refundBuyer")}
             </Button>
             <Button size="sm" variant="secondary" loading={busy} onClick={() => onResolve(p.buyer, false)}>
-              Release to organizer
+              {t("ap.releaseOrg")}
             </Button>
           </div>
         </li>

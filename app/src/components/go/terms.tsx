@@ -1,39 +1,42 @@
+"use client";
+
 import { daysFromSecs, formatUnits } from "@/lib/pacto/format";
 import { mulBpsCeil, type GroupOrderView } from "@/lib/pacto/state";
-
-const plural = (n: number, unit: string) => `${n} ${unit}${n === 1 ? "" : "s"}`;
+import { useCount, useT } from "@/lib/i18n/provider";
 
 /** The buyer-protection terms in plain words. Shown before anyone pays. */
 export function GoTerms({ go, decimals = 6, qty = 1 }: { go: GroupOrderView; decimals?: number; qty?: number }) {
+  const t = useT();
+  const count = useCount();
   const unit = BigInt(go.unitPrice);
   const total = unit * BigInt(qty);
   const advance = mulBpsCeil(total, go.advanceBps);
   const remainder = total - advance;
   const rows = [
     {
-      k: "Organizer advance",
+      k: t("terms.advance"),
       v: `${go.advanceBps / 100}%`,
-      d: `Paid to the organizer when the order locks so they can buy the goods. For ${qty} unit${qty === 1 ? "" : "s"} that is ${formatUnits(advance, decimals)} USDC. This is your maximum exposure.`,
+      d: t("terms.advanceDesc", { units: count("unit", qty), amount: formatUnits(advance, decimals) }),
     },
     {
-      k: "Held until delivery",
+      k: t("terms.held"),
       v: `${(10_000 - go.advanceBps) / 100}%`,
-      d: `${formatUnits(remainder, decimals)} USDC stays in the vault and is released only when you confirm receipt, or refunded if the organizer never ships.`,
+      d: t("terms.heldDesc", { amount: formatUnits(remainder, decimals) }),
     },
     {
-      k: "Ship-by window",
-      v: plural(daysFromSecs(go.shipBySecs), "day"),
-      d: "After locking, the organizer must mark the order shipped within this window, or you reclaim the held share.",
+      k: t("terms.shipWindow"),
+      v: count("day", daysFromSecs(go.shipBySecs)),
+      d: t("terms.shipWindowDesc"),
     },
     {
-      k: "Delivery window",
-      v: plural(daysFromSecs(go.deliveryWindowSecs), "day"),
-      d: "After shipping, you have this long to confirm or dispute. Undisputed shares release automatically afterwards.",
+      k: t("terms.deliveryWindow"),
+      v: count("day", daysFromSecs(go.deliveryWindowSecs)),
+      d: t("terms.deliveryWindowDesc"),
     },
     {
-      k: "Protocol fee",
+      k: t("terms.fee"),
       v: `${go.feeBps / 100}%`,
-      d: "Charged to the organizer on each payout. Buyers pay nothing extra.",
+      d: t("terms.feeDesc"),
     },
   ];
   return (

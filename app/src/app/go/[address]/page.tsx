@@ -12,6 +12,9 @@ import { Participants } from "@/components/go/participants";
 import { ShareRow } from "@/components/go/share";
 import { ActionPanel } from "@/components/go/action-panel";
 import { GoTerms } from "@/components/go/terms";
+import { OrderTiming, StatusDescription } from "@/components/go/order-bits";
+import { T } from "@/lib/i18n/provider";
+import type { MessageKey } from "@/lib/i18n/messages";
 import {
   fetchGroupOrder,
   fetchMintDecimals,
@@ -19,8 +22,7 @@ import {
   fetchParticipations,
   organizerStats,
 } from "@/lib/pacto/reads";
-import { formatDateTime, formatUnits, relativeTime, shortAddress, unixNow } from "@/lib/pacto/format";
-import { STATUS_DESCRIPTION, deliverBy, shipBy } from "@/lib/pacto/state";
+import { formatUnits, shortAddress, unixNow } from "@/lib/pacto/format";
 import { explorerUrl } from "@/lib/solana/cluster";
 
 type Params = { params: Promise<{ address: string }> };
@@ -56,21 +58,10 @@ async function Content({ params }: Params) {
   const now = unixNow();
   const stats = organizerStats(organizerOrders);
 
-  const timing =
-    go.status === "open"
-      ? now < go.joinDeadline
-        ? `Joins close ${relativeTime(go.joinDeadline, now)} (${formatDateTime(go.joinDeadline)})`
-        : "Join window closed. Waiting for the organizer to lock."
-      : go.status === "locked"
-        ? `Ship by ${formatDateTime(shipBy(go))}`
-        : go.status === "shipped"
-          ? `Confirm or dispute by ${formatDateTime(deliverBy(go))}`
-          : null;
-
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
       <nav className="text-[13px] text-ink-3" aria-label="Breadcrumb">
-        <Link href="/explore" className="hover:text-ink">Explore</Link> <span aria-hidden>/</span> {shortAddress(go.address)}
+        <Link href="/explore" className="hover:text-ink"><T k="go.breadcrumb" /></Link> <span aria-hidden>/</span> {shortAddress(go.address)}
       </nav>
 
       <div className="mt-5 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-12">
@@ -78,13 +69,13 @@ async function Content({ params }: Params) {
         <div className="lg:col-start-1">
           <div className="flex flex-wrap items-center gap-3">
             <StatusChip status={go.status} />
-            <span className="text-[13px] text-ink-2">{STATUS_DESCRIPTION[go.status]}</span>
+            <span className="text-[13px] text-ink-2"><StatusDescription status={go.status} /></span>
           </div>
           <h1 className="font-display mt-3 text-3xl font-semibold leading-tight text-ink sm:text-4xl">{go.title}</h1>
           <p className="mt-3 max-w-2xl text-[16px] leading-relaxed text-ink-2">{go.description}</p>
           {go.detailsUri ? (
             <a href={go.detailsUri} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1.5 text-[15px] font-medium text-ink underline-offset-4 hover:underline">
-              Full details on the organizer&apos;s post <ArrowSquareOut size={16} />
+              <T k="go.details" /> <ArrowSquareOut size={16} />
             </a>
           ) : null}
         </div>
@@ -101,54 +92,54 @@ async function Content({ params }: Params) {
           <Card className="p-6">
             <div className="flex flex-wrap items-baseline justify-between gap-3">
               <p className="tnum font-display text-3xl font-semibold text-ink">
-                {formatUnits(go.unitPrice, decimals)} <span className="text-base font-medium text-ink-3">USDC per unit</span>
+                {formatUnits(go.unitPrice, decimals)} <span className="text-base font-medium text-ink-3"><T k="go.perUnit" /></span>
               </p>
-              {timing ? <p className="text-[13px] text-ink-2">{timing}</p> : null}
+              <OrderTiming go={go} now={now} />
             </div>
             <div className="mt-5">
               <GoProgress go={go} />
             </div>
             <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-line pt-5 sm:grid-cols-4">
-              <Mini label="In escrow" value={`${formatUnits(go.totalPaid, decimals)} USDC`} />
-              <Mini label="Buyers" value={String(go.participants)} />
-              <Mini label="Advance to organizer" value={`${go.advanceBps / 100}%`} />
-              <Mini label="Arbiter" value={shortAddress(go.arbiter)} mono />
+              <Mini label="go.inEscrow" value={`${formatUnits(go.totalPaid, decimals)} USDC`} />
+              <Mini label="go.buyers" value={String(go.participants)} />
+              <Mini label="go.advance" value={`${go.advanceBps / 100}%`} />
+              <Mini label="go.arbiter" value={shortAddress(go.arbiter)} mono />
             </dl>
           </Card>
 
           <section>
-            <h2 className="font-display text-xl font-semibold text-ink">Where this order is</h2>
+            <h2 className="font-display text-xl font-semibold text-ink"><T k="go.whereTitle" /></h2>
             <div className="mt-5">
               <GoTimeline go={go} />
             </div>
             {go.shipmentRef ? (
               <p className="mt-4 rounded-lg bg-surface-2 px-4 py-3 text-[14px] text-ink-2">
-                Tracking: <span className="font-mono text-ink">{go.shipmentRef}</span>
+                <T k="go.tracking" /> <span className="font-mono text-ink">{go.shipmentRef}</span>
               </p>
             ) : null}
           </section>
 
           <section>
-            <h2 className="font-display text-xl font-semibold text-ink">Buyer protection on this order</h2>
+            <h2 className="font-display text-xl font-semibold text-ink"><T k="go.protectionTitle" /></h2>
             <div className="mt-5">
               <GoTerms go={go} decimals={decimals} />
             </div>
           </section>
 
           <section>
-            <h2 className="font-display text-xl font-semibold text-ink">Buyers ({participations.length})</h2>
+            <h2 className="font-display text-xl font-semibold text-ink"><T k="go.buyersTitle" params={{ n: participations.length }} /></h2>
             <div className="mt-4">
               <Participants list={participations} now={now} decimals={decimals} />
             </div>
           </section>
 
           <section className="border-t border-line pt-6">
-            <h2 className="text-sm font-medium text-ink-3">Share</h2>
+            <h2 className="text-sm font-medium text-ink-3"><T k="go.share" /></h2>
             <div className="mt-3">
               <ShareRow address={go.address} title={go.title} />
             </div>
             <p className="mt-4 break-all text-[13px] text-ink-3">
-              Order account{" "}
+              <T k="go.account" />{" "}
               <a href={explorerUrl("address", go.address)} target="_blank" rel="noreferrer" className="font-mono underline-offset-2 hover:underline">
                 {go.address}
               </a>
@@ -166,10 +157,10 @@ async function Content({ params }: Params) {
   );
 }
 
-function Mini({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
+function Mini({ label, value, mono }: { label: MessageKey; value: string; mono?: boolean }) {
   return (
     <div>
-      <dt className="text-xs text-ink-3">{label}</dt>
+      <dt className="text-xs text-ink-3"><T k={label} /></dt>
       <dd className={mono ? "font-mono text-[15px] text-ink" : "tnum text-[15px] font-medium text-ink"}>{value}</dd>
     </div>
   );
